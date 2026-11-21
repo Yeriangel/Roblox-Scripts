@@ -11,6 +11,7 @@ import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
+import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.diagnosepro.app.MainActivity
 import com.diagnosepro.app.R
@@ -165,6 +166,44 @@ class AppUiTest {
         clickText(s(R.string.m06_read))
         waitText(s(R.string.m06_pass), 30_000)
         shot(lang, "16_mode06")
+        rule.activity.onBackPressedDispatcher.onBackPressed()
+
+        // New tools (all reached from the Tools list, scrolling as needed)
+        fun openTool(desc: Int, waitFor: Int) {
+            waitText(s(R.string.tools_title))
+            rule.onNode(hasScrollAction()).performScrollToNode(hasText(s(desc)))
+            clickText(s(desc))
+            waitText(s(waitFor))
+        }
+        openTool(R.string.tool_sensors_desc, R.string.pid_rpm)
+        rule.waitUntil(30_000) {
+            val live = androidx.lifecycle.ViewModelProvider(rule.activity)[MainViewModel::class.java].obd.live.value
+            "boost" in live && "cat_temp_b1s1" in live
+        }
+        shot(lang, "18_all_sensors")
+        rule.activity.onBackPressedDispatcher.onBackPressed()
+        openTool(R.string.tool_perf_desc, R.string.perf_0_100)
+        shot(lang, "19_performance")
+        rule.activity.onBackPressedDispatcher.onBackPressed()
+        openTool(R.string.tool_alerts_desc, R.string.alerts_sound)
+        shot(lang, "20_alarms")
+        rule.activity.onBackPressedDispatcher.onBackPressed()
+        openTool(R.string.tool_battery_desc, R.string.battery_measure_rest)
+        shot(lang, "21_battery")
+        rule.activity.onBackPressedDispatcher.onBackPressed()
+        openTool(R.string.tool_dtc_search_desc, R.string.dtc_search_hint)
+        rule.onNode(androidx.compose.ui.test.hasSetTextAction()).performTextInput("P042")
+        waitText("P0420")
+        shot(lang, "22_code_lookup")
+        rule.activity.onBackPressedDispatcher.onBackPressed()
+        openTool(R.string.tool_maintenance_desc, R.string.maint_empty)
+        shot(lang, "23_maintenance")
+        rule.activity.onBackPressedDispatcher.onBackPressed()
+        openTool(R.string.tool_custom_desc, R.string.custom_empty)
+        shot(lang, "24_custom_pids")
+        rule.activity.onBackPressedDispatcher.onBackPressed()
+        openTool(R.string.tool_hud_desc, R.string.hud_mirror)
+        shot(lang, "25_hud")
         rule.activity.onBackPressedDispatcher.onBackPressed()
         rule.activity.onBackPressedDispatcher.onBackPressed()
 

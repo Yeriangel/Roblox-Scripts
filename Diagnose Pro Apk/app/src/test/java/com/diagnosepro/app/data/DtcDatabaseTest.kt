@@ -56,6 +56,14 @@ class DtcDatabaseTest {
         assertTrue(i.groupOnly)
     }
 
+    @Test fun offlineSearch() {
+        assertTrue(db.search("P030", false).any { it.code == "P0301" })
+        assertTrue(db.search("misfire", false).isNotEmpty())
+        assertTrue(db.search("הצתה", true).any { it.code == "P0301" })
+        assertTrue(db.search("x", false).isEmpty())
+        assertTrue(db.search("zzzzqq", false).isEmpty())
+    }
+
     @Test fun dtcJsonRoundTrip() {
         val list = listOf(Dtc("P0301", DtcKind.STORED, "7E8"), Dtc("P0420", DtcKind.PERMANENT, "7E8"))
         assertEquals(list, DtcJson.decode(DtcJson.encode(list)))

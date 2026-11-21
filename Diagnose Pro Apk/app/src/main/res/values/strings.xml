@@ -361,9 +361,6 @@
     <string name="tool_mode06_desc">Raw results of the car\'s self-tests</string>
     <string name="tool_fuel">Fuel consumption</string>
     <string name="tool_fuel_desc">Estimated from air flow and speed</string>
-    <string name="tool_accel">0-100 km/h timer</string>
-    <string name="tool_accel_mph">0-60 mph timer</string>
-    <string name="tool_accel_desc">Measure acceleration using live speed</string>
     <string name="tool_console">Developer console</string>
     <string name="tool_console_desc">Raw adapter commands and responses</string>
 
@@ -383,15 +380,6 @@
     <string name="fuel_need_maf">This car does not report air flow (MAF), so consumption cannot be estimated.</string>
     <string name="fuel_reset">Reset average</string>
 
-    <string name="accel_text">Stop the car completely, tap Arm, then accelerate. Timing starts when the car moves and stops at the target speed. Only on a closed road or track, and obey the law.</string>
-    <string name="accel_arm">Arm</string>
-    <string name="accel_armed">Armed — waiting for the car to move</string>
-    <string name="accel_need_stop">Stop the car to arm the timer.</string>
-    <string name="accel_running">Timing…</string>
-    <string name="accel_result">Result</string>
-    <string name="accel_best">Best: %1$s</string>
-    <string name="accel_reset">Reset</string>
-    <string name="accel_note">Accuracy is limited by how fast the car reports speed (about 0.1–0.3 s).</string>
 
     <string name="console_clear">Clear</string>
     <string name="console_empty">No traffic yet.</string>
@@ -442,4 +430,140 @@
 
     <string name="notif_channel">Adapter connection</string>
     <string name="notif_connected">Connected to %1$s</string>
+
+    <!-- Extended PIDs -->
+    <string name="pid_rail_pressure_rel">Fuel rail pressure (relative)</string>
+    <string name="pid_rail_pressure">Fuel rail pressure</string>
+    <string name="pid_egr_commanded">Commanded EGR</string>
+    <string name="pid_egr_error">EGR error</string>
+    <string name="pid_evap_purge">EVAP purge</string>
+    <string name="pid_warmups_cleared">Warm-ups since clear</string>
+    <string name="pid_cat_temp_b1s1">Catalyst temp B1 S1</string>
+    <string name="pid_cat_temp_b2s1">Catalyst temp B2 S1</string>
+    <string name="pid_cat_temp_b1s2">Catalyst temp B1 S2</string>
+    <string name="pid_absolute_load">Absolute load</string>
+    <string name="pid_commanded_lambda">Commanded lambda</string>
+    <string name="pid_relative_throttle">Relative throttle</string>
+    <string name="pid_accel_pedal">Accelerator pedal</string>
+    <string name="pid_commanded_throttle">Commanded throttle</string>
+    <string name="pid_time_mil_on">Time with light on</string>
+    <string name="pid_time_since_clear">Time since codes cleared</string>
+    <string name="pid_ethanol">Ethanol in fuel</string>
+    <string name="pid_rail_pressure_abs">Fuel rail pressure (absolute)</string>
+    <string name="pid_relative_pedal">Relative pedal position</string>
+    <string name="pid_hybrid_battery">Hybrid battery charge</string>
+    <string name="pid_injection_timing">Injection timing</string>
+    <string name="pid_torque_demand">Requested torque</string>
+    <string name="pid_torque_actual">Actual torque</string>
+    <string name="pid_torque_reference">Reference torque</string>
+    <string name="pid_boost">Turbo boost (calc.)</string>
+    <string name="pid_power_est">Power (estimate)</string>
+    <string name="pid_consumption_est">Consumption (estimate)</string>
+    <string name="stats_minmax">min %1$s · max %2$s</string>
+
+    <!-- New tools -->
+    <string name="tool_sensors">All sensors</string>
+    <string name="tool_sensors_desc">Every value your car reports, on one screen</string>
+    <string name="tool_custom">Custom PIDs</string>
+    <string name="tool_custom_desc">Add your own sensors with a formula</string>
+    <string name="tool_alerts">Alarms</string>
+    <string name="tool_alerts_desc">Get warned when a value crosses a limit</string>
+    <string name="tool_hud">HUD mode</string>
+    <string name="tool_hud_desc">Big speed display, mirrored for the windshield</string>
+    <string name="tool_perf">Performance tests</string>
+    <string name="tool_perf_desc">0–100, 80–120, quarter mile and braking</string>
+    <string name="tool_battery">Battery test</string>
+    <string name="tool_battery_desc">Check the battery, starter and alternator</string>
+    <string name="tool_dtc_search">Code lookup</string>
+    <string name="tool_dtc_search_desc">Search the offline fault code database</string>
+    <string name="tool_maintenance">Maintenance log</string>
+    <string name="tool_maintenance_desc">Service history and reminders</string>
+
+    <string name="sensors_waiting">Reading sensors…</string>
+    <string name="reset_minmax">Reset min/max</string>
+
+    <string name="custom_add">Add custom PID</string>
+    <string name="custom_edit">Edit custom PID</string>
+    <string name="custom_name">Name</string>
+    <string name="custom_command">Command (hex)</string>
+    <string name="custom_command_hint">Read commands only: 01xx, 21xx or 22xxxx. Example: 221234</string>
+    <string name="custom_formula">Formula</string>
+    <string name="custom_formula_hint">A, B, C… are the data bytes. Example: (A*256+B)/4</string>
+    <string name="custom_unit">Unit</string>
+    <string name="custom_min">Gauge min</string>
+    <string name="custom_max">Gauge max</string>
+    <string name="custom_bad_command">Only read commands are allowed: 01xx, 21xx or 22xxxx.</string>
+    <string name="custom_bad_formula">Formula error: %1$s</string>
+    <string name="custom_empty">No custom PIDs yet.</string>
+    <string name="custom_note">Custom PIDs read manufacturer-specific data. You need the correct command and formula for your car model (search the web for your model\'s PID list). After adding one, show it with \"Choose gauges\" or in the live graph.</string>
+    <string name="custom_no_answer">no answer</string>
+
+    <string name="alerts_add">Add alarm</string>
+    <string name="alerts_sensor">Sensor</string>
+    <string name="alerts_above">Above</string>
+    <string name="alerts_below">Below</string>
+    <string name="alerts_value">Limit (%1$s)</string>
+    <string name="alerts_sound">Play a sound</string>
+    <string name="alerts_empty">No alarms. Add one to be warned about overheating, low voltage and more.</string>
+    <string name="alerts_note">Alarms are checked on every screen while connected.</string>
+    <string name="alert_banner">Alarm: %1$s</string>
+
+    <string name="hud_mirror">Mirror</string>
+    <string name="hud_hint">Lay the phone on the dashboard: the mirrored image reflects in the windshield. Works best at night.</string>
+
+    <string name="perf_text">Stop the car, then drive. Each result is filled in automatically when its speed or distance is reached. Only on a closed road or track, and obey the law.</string>
+    <string name="perf_0_60">0–60 km/h</string>
+    <string name="perf_0_100">0–100 km/h</string>
+    <string name="perf_80_120">80–120 km/h</string>
+    <string name="perf_quarter">Quarter mile (402 m)</string>
+    <string name="perf_trap">Speed at 402 m</string>
+    <string name="perf_brake">Braking 100–0 km/h</string>
+    <string name="perf_brake_dist">Braking distance</string>
+    <string name="perf_max_speed">Top speed</string>
+    <string name="perf_power">Peak power (estimate)</string>
+    <string name="perf_running">Run in progress…</string>
+    <string name="perf_reset">Reset</string>
+    <string name="perf_note">Accuracy is limited by how often the car reports speed (a few times per second). Power is estimated from air flow.</string>
+
+    <string name="battery_text">Three quick measurements of the 12 V system using the adapter\'s voltage reading.</string>
+    <string name="battery_step1">1. Engine off, ignition on</string>
+    <string name="battery_measure_rest">Measure resting voltage</string>
+    <string name="battery_step2">2. Tap the button, then start the engine</string>
+    <string name="battery_measure_crank">Start cranking test (15 s)</string>
+    <string name="battery_step3">3. Engine idling</string>
+    <string name="battery_measure_charge">Measure charging voltage</string>
+    <string name="battery_resting">Resting voltage</string>
+    <string name="battery_cranking">Lowest while cranking</string>
+    <string name="battery_charging">Charging voltage</string>
+    <string name="battery_measuring">Measuring…</string>
+    <string name="battery_crank_now">Start the engine now…</string>
+    <string name="verdict_good">Good</string>
+    <string name="verdict_weak">Weak</string>
+    <string name="verdict_bad">Problem</string>
+    <string name="battery_note">Measured at the OBD port, which reads slightly lower than at the battery, and the adapter samples slowly, so a very short voltage dip can be missed. Treat it as an indication.</string>
+
+    <string name="dtc_search_hint">Code or keyword (P0420, misfire…)</string>
+    <string name="dtc_search_empty">No matching codes.</string>
+    <string name="dtc_search_intro">Type a code or a word to search all %1$d codes offline.</string>
+
+    <string name="maint_add">Add entry</string>
+    <string name="maint_title">What was done (e.g. oil change)</string>
+    <string name="maint_odometer">Odometer (km)</string>
+    <string name="maint_cost">Cost</string>
+    <string name="maint_note">Notes</string>
+    <string name="maint_remind">Remind me at (km)</string>
+    <string name="maint_empty">No entries yet. Log services and repairs here, and set a reminder for the next one.</string>
+    <string name="maint_due">Due now</string>
+    <string name="maint_remind_at">Reminder at %1$s</string>
+    <string name="maint_due_banner">Maintenance due: %1$s</string>
+
+    <string name="terminal_hint">Command (AT… or read-only OBD)</string>
+    <string name="terminal_send">Send</string>
+    <string name="terminal_blocked">Blocked. Only adapter commands and read-only services (01, 02, 03, 06, 07, 09, 0A, 21, 22) are allowed.</string>
+
+    <string name="set_fuel">Fuel cost</string>
+    <string name="set_fuel_price">Price per litre</string>
+    <string name="set_currency">Currency</string>
+    <string name="fuel_cost">Trip fuel cost</string>
+    <string name="fuel_cost_100">Cost per 100 km</string>
 </resources>

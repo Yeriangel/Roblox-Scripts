@@ -28,7 +28,16 @@ import javax.inject.Singleton
 object DataModule {
     @Provides @Singleton
     fun db(@ApplicationContext ctx: Context): AppDatabase =
-        Room.databaseBuilder(ctx, AppDatabase::class.java, "diagnosepro.db").build()
+        Room.databaseBuilder(ctx, AppDatabase::class.java, "diagnosepro.db").addMigrations(MIGRATION_1_2).build()
+
+    /** v2 adds custom PIDs and the maintenance log; existing scans and trips are kept. */
+    val MIGRATION_1_2 = object : androidx.room.migration.Migration(1, 2) {
+        override fun migrate(db: androidx.sqlite.db.SupportSQLiteDatabase) {
+            db.execSQL("CREATE TABLE IF NOT EXISTS `custom_pids` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `command` TEXT NOT NULL, `formula` TEXT NOT NULL, `unit` TEXT NOT NULL, `minValue` REAL NOT NULL, `maxValue` REAL NOT NULL)")
+            db.execSQL("CREATE TABLE IF NOT EXISTS `maintenance` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `vehicleId` INTEGER, `title` TEXT NOT NULL, `date` INTEGER NOT NULL, `odometerKm` REAL, `cost` REAL, `note` TEXT NOT NULL, `remindAtKm` REAL)")
+            db.execSQL("CREATE INDEX IF NOT EXISTS `index_maintenance_vehicleId` ON `maintenance` (`vehicleId`)")
+        }
+    }
 }
 
 @Serializable
@@ -68,6 +77,16 @@ class HistoryRepository @Inject constructor(private val db: AppDatabase) {
     suspend fun samples(id: Long) = db.sessions().samples(id)
     suspend fun samples(id: Long, pid: String) = db.sessions().samples(id, pid)
     suspend fun deleteSession(id: Long) = db.sessions().delete(id)
+}
+
+@Singleton
+class ExtrasRepository @Inject constructor(private val db: AppDatabase) {
+    val customPids: Flow<List<com.diagnosepro.app.data.db.CustomPidEntity>> = db.customPids().observeAll()
+    val maintenance: Flow<List<com.diagnosepro.app.data.db.MaintenanceEntity>> = db.maintenance().observeAll()
+    suspend fun saveCustomPid(p: com.diagnosepro.app.data.db.CustomPidEntity) { if (p.id == 0L) db.customPids().insert(p) else db.customPids().update(p) }
+    suspend fun deleteCustomPid(id: Long) = db.customPids().delete(id)
+    suspend fun addMaintenance(m: com.diagnosepro.app.data.db.MaintenanceEntity) = db.maintenance().insert(m)
+    suspend fun deleteMaintenance(id: Long) = db.maintenance().delete(id)
 }
 
 @Singleton

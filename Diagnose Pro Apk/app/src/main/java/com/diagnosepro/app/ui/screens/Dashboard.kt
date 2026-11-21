@@ -51,6 +51,8 @@ import com.diagnosepro.app.ui.components.BackTopBar
 import com.diagnosepro.app.ui.components.Banner
 import com.diagnosepro.app.ui.components.ValueTile
 import com.diagnosepro.app.ui.formatPid
+import com.diagnosepro.app.ui.unitOf
+import com.diagnosepro.app.i18n.Bidi
 import com.diagnosepro.app.ui.isRtl
 import com.diagnosepro.app.ui.nav.Routes
 import com.diagnosepro.app.ui.pidName
@@ -59,7 +61,8 @@ import com.diagnosepro.app.ui.theme.Danger
 private val BIG_GAUGES = setOf("rpm", "speed")
 
 @Composable
-fun DashboardScreen(vm: MainViewModel, nav: NavController) {
+fun DashboardScreen(vm: MainViewModel, nav: NavController, evm: com.diagnosepro.app.ui.ExtrasViewModel = androidx.hilt.navigation.compose.hiltViewModel()) {
+    val maintenance by evm.maintenance.collectAsStateWithLifecycle()
     val state by vm.obd.state.collectAsStateWithLifecycle()
     val live by vm.obd.live.collectAsStateWithLifecycle()
     val supported by vm.obd.supportedPids.collectAsStateWithLifecycle()
@@ -71,11 +74,16 @@ fun DashboardScreen(vm: MainViewModel, nav: NavController) {
     val rtl = isRtl()
 
     val chosen = vehicle?.gauges?.split(',')?.filter { it.isNotBlank() }?.takeIf { it.isNotEmpty() } ?: Pids.defaultDashboard
-    val visible = chosen.filter { k -> Pids.byKey(k)?.let { it.key == Pids.KEY_ADAPTER_VOLTAGE || it.pid in supported } == true }
+    val visible = chosen.filter { k -> Pids.byKey(k)?.let { Pids.isAvailable(it, supported) } == true }
     val hidden = if (state.isConnected) chosen.size - visible.size else 0
 
-    DisposableEffect(visible) {
-        vm.obd.setDemand("dashboard", visible)
+    // Reminders are compared against the odometer, so read it when any reminder exists.
+    val reminders = maintenance.filter { it.remindAtKm != null && (it.vehicleId == null || it.vehicleId == vehicle?.id) }
+    val demandKeys = if (reminders.isEmpty()) visible else visible + "odometer"
+    val odo = live["odometer"]?.value
+    val due = reminders.filter { odo != null && odo >= it.remindAtKm!! }
+    DisposableEffect(demandKeys) {
+        vm.obd.setDemand("dashboard", demandKeys)
         onDispose { vm.obd.setDemand("dashboard", emptyList()) }
     }
 
@@ -115,21 +123,24 @@ fun DashboardScreen(vm: MainViewModel, nav: NavController) {
                         Text(stringResource(R.string.logging_stop) + " · " + stringResource(R.string.logging_active, Units.formatDuration((System.currentTimeMillis() - log.startedAt) / 1000)))
                     }
                 }
+                due.forEach { m -> Spacer(Modifier.padding(4.dp)); Banner(stringResource(R.string.maint_due_banner, m.title), onClick = { nav.navigate(Routes.MAINTENANCE) }) }
                 if (!responding) { Spacer(Modifier.padding(4.dp)); Banner(stringResource(R.string.vehicle_not_responding)) }
                 if (hidden > 0) { Spacer(Modifier.padding(4.dp)); Text(stringResource(R.string.dash_unsupported_hidden, hidden), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
                 if (visible.isEmpty()) Text(stringResource(R.string.dash_no_gauges))
             }
         }
         items(visible, key = { it }) { key ->
-            val def = Pids.byKey(key)!!
+            val def = Pids.byKey(key) ?: return@items
             val v = live[key]?.value
-            val (num, unit) = if (v != null) formatPid(def, v, units) else "—" to Units.unitLabel(def.quantity, units)
+            val (num, unit) = if (v != null) formatPid(def, v, units) else "—" to unitOf(def, units)
             val warn = v != null && def.isWarning(v)
             if (key in BIG_GAUGES) {
                 val frac = if (v == null) 0f else ((v - def.gaugeMin) / (def.gaugeMax - def.gaugeMin)).toFloat()
                 ArcGauge(pidName(key), num, unit, frac, warn, rtl)
             } else {
-                ValueTile(pidName(key), num, unit, warn)
+                val st = vm.obd.statsOf(key)?.takeIf { v != null }
+                ValueTile(pidName(key), num, unit, warn,
+                    sub = st?.let { stringResource(R.string.stats_minmax, Bidi.ltr(formatPid(def, it.first, units).first), Bidi.ltr(formatPid(def, it.second, units).first)) })
             }
         }
         item(span = { GridItemSpan(2) }) { Spacer(Modifier.padding(8.dp)) }
@@ -141,7 +152,7 @@ fun GaugeConfigScreen(vm: MainViewModel, onBack: () -> Unit) {
     val vehicle by vm.obd.vehicle.collectAsStateWithLifecycle()
     val supported by vm.obd.supportedPids.collectAsStateWithLifecycle()
     val initial = vehicle?.gauges?.split(',')?.filter { it.isNotBlank() }?.takeIf { it.isNotEmpty() } ?: Pids.defaultDashboard
-    val allKeys = (Pids.all.map { it.key } + Pids.KEY_ADAPTER_VOLTAGE)
+    val allKeys = Pids.allKeys()
     // Ordered list: selected first (in saved order), then the rest.
     val order = remember(vehicle?.id) { mutableStateListOf<String>().apply { addAll(initial + allKeys.filterNot { it in initial }) } }
     val selected = remember(vehicle?.id) { mutableStateListOf<String>().apply { addAll(initial) } }
@@ -158,8 +169,8 @@ fun GaugeConfigScreen(vm: MainViewModel, onBack: () -> Unit) {
         LazyColumn(Modifier.fillMaxSize().padding(pad).padding(horizontal = 16.dp)) {
             item { Text(stringResource(R.string.gauges_hint), style = MaterialTheme.typography.bodyMedium, modifier = Modifier.padding(vertical = 8.dp)) }
             itemsIndexed(order, key = { _, k -> k }) { idx, key ->
-                val def = Pids.byKey(key)!!
-                val isSupported = supported.isEmpty() || def.key == Pids.KEY_ADAPTER_VOLTAGE || def.pid in supported
+                val def = Pids.byKey(key) ?: return@itemsIndexed
+                val isSupported = supported.isEmpty() || Pids.isAvailable(def, supported)
                 Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                     Checkbox(checked = key in selected, onCheckedChange = { if (it) selected.add(key) else selected.remove(key); save() })
                     Column(Modifier.weight(1f)) {

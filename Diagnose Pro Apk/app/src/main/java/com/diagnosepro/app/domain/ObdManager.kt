@@ -1,6 +1,7 @@
 package com.diagnosepro.app.domain
 
 import android.content.Context
+import com.diagnosepro.app.data.ExtrasRepository
 import com.diagnosepro.app.data.HistoryRepository
 import com.diagnosepro.app.data.RawLogStore
 import com.diagnosepro.app.data.VehicleRepository
@@ -11,6 +12,9 @@ import com.diagnosepro.app.data.settings.SettingsRepository
 import com.diagnosepro.app.elm327.AdapterInfo
 import com.diagnosepro.app.elm327.Elm327
 import com.diagnosepro.app.elm327.ElmInitException
+import com.diagnosepro.app.elm327.ElmResult
+import com.diagnosepro.app.obd.CustomPid
+import com.diagnosepro.app.obd.TerminalGuard
 import com.diagnosepro.app.elm327.InitStage
 import com.diagnosepro.app.elm327.ObdProtocol
 import com.diagnosepro.app.elm327.RawLogger
@@ -90,8 +94,27 @@ class ObdManager @Inject constructor(
     private val history: HistoryRepository,
     private val vehicles: VehicleRepository,
     private val bluetooth: BluetoothHelper,
+    private val extras: ExtrasRepository,
 ) {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+
+    /** Alarm rules currently violated (shown as a banner; a tone plays when one starts). */
+    private val _alerts = MutableStateFlow<List<ActiveAlert>>(emptyList())
+    val alerts: StateFlow<List<ActiveAlert>> = _alerts.asStateFlow()
+    @Volatile private var alertRules: List<AlertRule> = emptyList()
+    @Volatile private var alertSound = true
+    private val lastTone = HashMap<AlertRule, Long>()
+    private val stats = HashMap<String, Pair<Double, Double>>()
+
+    init {
+        // Keep user-defined PIDs registered so every screen can resolve them by key.
+        scope.launch {
+            extras.customPids.collect { list ->
+                Pids.setCustom(list.mapNotNull { CustomPid.toDef(it.id, it.name, it.command, it.formula, it.unit, it.minValue, it.maxValue) })
+            }
+        }
+        scope.launch { settings.settings.collect { alertRules = it.alerts; alertSound = it.alertSound } }
+    }
 
     private val _state = MutableStateFlow<ConnectionState>(ConnectionState.Disconnected)
     val state: StateFlow<ConnectionState> = _state.asStateFlow()
@@ -150,6 +173,8 @@ class ObdManager @Inject constructor(
         obd = null
         _state.value = ConnectionState.Disconnected
         _live.value = emptyMap()
+        _alerts.value = emptyList()
+        resetStats()
         ObdForegroundService.stop(context)
     }
 
@@ -243,9 +268,15 @@ class ObdManager @Inject constructor(
     }
 
     private fun demandedDefs(): List<PidDef> {
-        val keys = synchronized(demand) { demand.values.flatten().toSet() } + (_logging.value?.keys ?: emptyList())
+        // Alarms must keep working on every screen, so their PIDs are always polled.
+        val keys = synchronized(demand) { demand.values.flatten().toSet() } + (_logging.value?.keys ?: emptyList()) + alertRules.map { it.key }
         val supported = _supported.value
-        return keys.mapNotNull { Pids.byKey(it) }.filter { it.key == Pids.KEY_ADAPTER_VOLTAGE || it.pid in supported }
+        val wanted = keys.mapNotNull { Pids.byKey(it) }.filter { Pids.isAvailable(it, supported) }
+        // Calculated PIDs need their inputs read from the car (boost also uses baro when available).
+        val inputs = wanted.filter { it.isComputed }
+            .flatMap { it.inputs + if (it.key == "boost") listOf("baro") else emptyList() }
+            .mapNotNull { Pids.byKey(it) }.filter { Pids.isAvailable(it, supported) }
+        return (wanted + inputs).distinctBy { it.key }
     }
 
     private suspend fun pollLoop(service: ObdService, defaultDelay: Long) {
@@ -258,6 +289,7 @@ class ObdManager @Inject constructor(
             var gotAny = false
             var attempted = 0
             for (def in defs) {
+                if (def.isComputed) continue
                 if (cycle % def.priority.everyNCycles != 0L && _live.value.containsKey(def.key)) continue
                 attempted++
                 val v = service.readPid(def) // throws TransportClosedException on link loss
@@ -269,6 +301,16 @@ class ObdManager @Inject constructor(
             if (attempted > 0 && defs.any { it.key != Pids.KEY_ADAPTER_VOLTAGE }) {
                 silentCycles = if (gotAny) 0 else silentCycles + 1
                 _vehicleResponding.value = silentCycles < 4
+            }
+            // Derive calculated PIDs from the values just read.
+            val computed = defs.filter { it.isComputed }
+            if (computed.isNotEmpty()) {
+                val values = _live.value.mapValues { it.value.value }
+                val now = System.currentTimeMillis()
+                for (def in computed) {
+                    val v = runCatching { def.compute?.invoke(values) }.getOrNull()
+                    if (v != null) record(def.key, v, now) else _live.value = _live.value - def.key
+                }
             }
             flushSamplesIfNeeded()
             cycle++
@@ -283,13 +325,40 @@ class ObdManager @Inject constructor(
             val q = liveHistory.getOrPut(key) { ArrayDeque() }
             q.addLast(t to value)
             while (q.isNotEmpty() && t - q.first().first > historyWindowMs) q.removeFirst()
+            val s = stats[key]
+            stats[key] = if (s == null) value to value else minOf(s.first, value) to maxOf(s.second, value)
         }
+        checkAlerts(key, value, t)
         val log = _logging.value
         if (log != null && key in log.keys) {
             synchronized(pendingSamples) { pendingSamples += SampleEntity(sessionId = log.sessionId, t = t, pid = key, value = value) }
             _logging.value = log.copy(samples = log.samples + 1)
         }
     }
+
+    private fun checkAlerts(key: String, value: Double, t: Long) {
+        val rules = alertRules.filter { it.key == key }
+        if (rules.isEmpty() && _alerts.value.none { it.rule.key == key }) return
+        val violated = rules.filter { it.matches(value) }
+        val others = _alerts.value.filter { it.rule.key != key }
+        val started = violated.filter { r -> _alerts.value.none { it.rule == r } }
+        _alerts.value = others + violated.map { ActiveAlert(it, value, t) }
+        if (started.isNotEmpty() && alertSound) {
+            val now = android.os.SystemClock.elapsedRealtime()
+            if (started.any { now - (lastTone[it] ?: 0L) > 20_000 }) {
+                started.forEach { lastTone[it] = now }
+                runCatching {
+                    val tone = android.media.ToneGenerator(android.media.AudioManager.STREAM_ALARM, 90)
+                    tone.startTone(android.media.ToneGenerator.TONE_CDMA_EMERGENCY_RINGBACK, 900)
+                    scope.launch { delay(1_200); runCatching { tone.release() } }
+                }
+            }
+        }
+    }
+
+    /** Minimum and maximum seen since connecting (or since [resetStats]). */
+    fun statsOf(key: String): Pair<Double, Double>? = synchronized(historyLock) { stats[key] }
+    fun resetStats() = synchronized(historyLock) { stats.clear() }
 
     /** Snapshot of the last 10 minutes of a PID, for live graphs. */
     fun historyOf(key: String): List<Pair<Long, Double>> = synchronized(historyLock) { liveHistory[key]?.toList() ?: emptyList() }
@@ -374,6 +443,18 @@ class ObdManager @Inject constructor(
         withObd { it.readMonitorStatus(0x01) to (if (0x41 in _supported.value) it.readMonitorStatus(0x41) else null) }
     suspend fun readVehicleInfo(): VehicleInfo? = withObd { it.readVehicleInfo() }
     suspend fun readMode06(): List<ObdDecoders.Mode06Result>? = withObd { it.readMode06() }
+    suspend fun readVoltage(): Double? = withObd { it.readVoltage() }
+
+    /** Developer terminal. Refuses anything that is not a safe adapter command or a read-only service. */
+    suspend fun sendRaw(command: String): String? {
+        if (!TerminalGuard.isAllowed(command)) return null
+        return withObd { s ->
+            when (val r = s.elm.send(command.replace(" ", "").uppercase(), 5_000, retry = false)) {
+                is ElmResult.Data -> r.lines.joinToString("\n")
+                is ElmResult.Error -> r.error.name
+            }
+        }
+    }
 
     suspend fun setGauges(keys: List<String>) = withContext(Dispatchers.IO) {
         setGaugesInternal(keys)

@@ -26,6 +26,13 @@ import androidx.compose.material.icons.filled.RemoveCircleOutline
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Terminal
 import androidx.compose.material.icons.filled.Timer
+import androidx.compose.material.icons.filled.Sensors
+import androidx.compose.material.icons.filled.NotificationsActive
+import androidx.compose.material.icons.filled.Speed
+import androidx.compose.material.icons.filled.BatteryChargingFull
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.Functions
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -54,7 +61,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.diagnosepro.app.R
-import com.diagnosepro.app.domain.SpeedUnit
 import com.diagnosepro.app.i18n.Bidi
 import com.diagnosepro.app.obd.ObdDecoders
 import com.diagnosepro.app.obd.VinDecoder
@@ -81,7 +87,6 @@ import java.util.Locale
 @Composable
 fun ToolsScreen(vm: MainViewModel, nav: NavController) {
     val settings by vm.settings.collectAsStateWithLifecycle()
-    val mph = settings?.units?.speed == SpeedUnit.MPH
     data class T(val icon: ImageVector, val title: Int, val desc: Int, val route: String)
     val tools = buildList {
         add(T(Icons.AutoMirrored.Filled.FactCheck, R.string.rd_title, R.string.tool_readiness_desc, Routes.READINESS))
@@ -89,7 +94,14 @@ fun ToolsScreen(vm: MainViewModel, nav: NavController) {
         add(T(Icons.Filled.DirectionsCar, R.string.vi_title, R.string.tool_vehicle_desc, Routes.VEHICLE))
         add(T(Icons.AutoMirrored.Filled.Assignment, R.string.tool_mode06, R.string.tool_mode06_desc, Routes.MODE06))
         add(T(Icons.Filled.LocalGasStation, R.string.tool_fuel, R.string.tool_fuel_desc, Routes.FUEL))
-        add(T(Icons.Filled.Timer, if (mph) R.string.tool_accel_mph else R.string.tool_accel, R.string.tool_accel_desc, Routes.ACCEL))
+        add(T(Icons.Filled.Timer, R.string.tool_perf, R.string.tool_perf_desc, Routes.ACCEL))
+        add(T(Icons.Filled.Sensors, R.string.tool_sensors, R.string.tool_sensors_desc, Routes.SENSORS))
+        add(T(Icons.Filled.NotificationsActive, R.string.tool_alerts, R.string.tool_alerts_desc, Routes.ALERTS))
+        add(T(Icons.Filled.Speed, R.string.tool_hud, R.string.tool_hud_desc, Routes.HUD))
+        add(T(Icons.Filled.BatteryChargingFull, R.string.tool_battery, R.string.tool_battery_desc, Routes.BATTERY))
+        add(T(Icons.Filled.Search, R.string.tool_dtc_search, R.string.tool_dtc_search_desc, Routes.DTC_SEARCH))
+        add(T(Icons.Filled.Build, R.string.tool_maintenance, R.string.tool_maintenance_desc, Routes.MAINTENANCE))
+        add(T(Icons.Filled.Functions, R.string.tool_custom, R.string.tool_custom_desc, Routes.CUSTOM_PIDS))
         if (settings?.developerConsole == true) add(T(Icons.Filled.Terminal, R.string.tool_console, R.string.tool_console_desc, Routes.CONSOLE))
     }
     Scaffold(topBar = { BackTopBar(stringResource(R.string.tools_title), { nav.popBackStack() }) }) { pad ->

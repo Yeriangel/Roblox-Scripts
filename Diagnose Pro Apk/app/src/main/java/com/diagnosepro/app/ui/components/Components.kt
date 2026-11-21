@@ -164,7 +164,7 @@ fun ArcGauge(
 
 /** Compact value tile for secondary gauges. */
 @Composable
-fun ValueTile(label: String, valueText: String, unit: String, warning: Boolean, modifier: Modifier = Modifier) {
+fun ValueTile(label: String, valueText: String, unit: String, warning: Boolean, modifier: Modifier = Modifier, sub: String? = null) {
     Card(modifier, colors = CardDefaults.cardColors(containerColor = if (warning) Danger.copy(alpha = 0.18f) else MaterialTheme.colorScheme.surfaceVariant)) {
         Column(Modifier.fillMaxWidth().padding(14.dp)) {
             Text(label, style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 2, overflow = TextOverflow.Ellipsis)
@@ -174,6 +174,7 @@ fun ValueTile(label: String, valueText: String, unit: String, warning: Boolean, 
                 LtrText(if (unit.isEmpty()) valueText else "$valueText $unit", style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold, fontSize = 26.sp),
                     color = if (warning) Danger else MaterialTheme.colorScheme.onSurface, maxLines = 1)
             }
+            if (sub != null) Text(sub, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
         }
     }
 }

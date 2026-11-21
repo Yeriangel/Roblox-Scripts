@@ -42,7 +42,7 @@ class DemoTransport(
 
     private val simulatedPids = setOf(
         0x01, 0x03, 0x04, 0x05, 0x06, 0x07, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x13, 0x14, 0x15,
-        0x1C, 0x1F, 0x21, 0x2F, 0x31, 0x33, 0x41, 0x42, 0x46, 0x5C, 0x5E, 0xA6,
+        0x1C, 0x1F, 0x21, 0x2E, 0x2F, 0x31, 0x33, 0x3C, 0x41, 0x42, 0x44, 0x46, 0x49, 0x5C, 0x5E, 0x62, 0x63, 0xA6,
     )
 
     override suspend fun open() {
@@ -96,6 +96,8 @@ class DemoTransport(
             }
             0x06 -> mode06(pid)
             0x09 -> mode09(pid)
+            // Read-data-by-id (used by custom PIDs): answer any id with the RPM word.
+            0x22 -> if (cmd.length >= 6) frame("7E8", listOf(0x62, cmd.substring(2, 4).toInt(16), cmd.substring(4, 6).toInt(16)) + word((rpm() * 4).toInt())) else "?"
             else -> "NO DATA"
         }
     }
@@ -178,6 +180,12 @@ class DemoTransport(
             0x2F -> listOf(pct(max(5.0, 62 - seconds() / 120)))
             0x31 -> word(if (cleared) ((clock() - clearedAt) / 60_000).toInt() else 1840)
             0x33 -> listOf(101)
+            0x2E -> listOf(pct(12.0))
+            0x3C -> word(((min(540.0, 150 + seconds() * 3)) + 40).toInt() * 10)
+            0x44 -> word(32768) // lambda 1.000
+            0x49 -> listOf(pct(throttle() * 0.9))
+            0x62 -> listOf((load() * 0.8).toInt() + 125)
+            0x63 -> word(250)
             0x42 -> word(((14.1 + rnd.nextDouble(-0.08, 0.08)) * 1000).toInt())
             0x46 -> listOf(27 + 40)
             0x5C -> listOf((min(102.0, 30 + seconds() * 0.5) + 40).toInt())

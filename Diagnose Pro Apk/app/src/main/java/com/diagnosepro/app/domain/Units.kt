@@ -23,6 +23,7 @@ object Units {
         Quantity.TEMPERATURE -> if (p.temp == TempUnit.F) v * 9 / 5 + 32 else v
         Quantity.PRESSURE -> when (p.pressure) { PressureUnit.KPA -> v; PressureUnit.BAR -> v / 100.0; PressureUnit.PSI -> v * 0.145038 }
         Quantity.FUEL_RATE -> if (p.economy == EconomyUnit.MPG_US) v * 0.264172 else v
+        Quantity.ECONOMY -> FuelEstimator.toUnit(v, p.economy)
         else -> v
     }
 
@@ -38,6 +39,10 @@ object Units {
         Quantity.ANGLE -> "°"
         Quantity.TIME -> ""
         Quantity.FUEL_RATE -> if (p.economy == EconomyUnit.MPG_US) "gal/h" else "L/h"
+        Quantity.TORQUE -> "Nm"
+        Quantity.LAMBDA -> "λ"
+        Quantity.POWER -> "hp"
+        Quantity.ECONOMY -> FuelEstimator.label(p.economy)
         Quantity.RAW -> ""
     }
 

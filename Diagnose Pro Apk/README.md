@@ -51,6 +51,25 @@ No adapter? Choose **Demo mode** to try every screen with a simulated car.
 | Trip recording with summary, replay and CSV export; scan history with comparison against the previous scan | Dashboard → *Record trip*, History |
 | Language (Hebrew / English / system), units, polling speed, auto-connect, keep screen on, theme, developer console | Settings |
 
+**Added in 1.1** (all under Dashboard → Tools):
+
+| Feature | Notes |
+|---|---|
+| ~25 more sensors + calculated ones | fuel rail pressure, EGR, catalyst temperature, lambda, pedal, torque…; turbo boost, power and instant consumption are estimates |
+| All sensors | every supported value on one screen with min/max |
+| Custom PIDs | your own read command (modes 01, 21, 22 only) with a formula over bytes A..H, e.g. `(A*256+B)/4` |
+| Alarms | sound + banner when a value goes above/below your limit (default: coolant > 110 °C) |
+| HUD mode | large speed/RPM, mirrored for windshield reflection |
+| Performance tests | 0-60, 0-100, 80-120 km/h, quarter mile, braking 100-0, peak power estimate |
+| Battery test | resting, cranking and charging voltage with a verdict |
+| Code lookup | offline search of all fault codes by code or keyword |
+| Maintenance log | service history with odometer reminders |
+| Fuel cost | set price per litre in Settings; trip cost in Fuel consumption |
+| Terminal | in the developer console; only adapter commands and read-only OBD services are accepted |
+
+Not included: brand-specific ABS/airbag/transmission diagnostics, coding and service resets. These need each
+manufacturer's proprietary data and write to the car's computers.
+
 The raw ELM327 log (copy/share) is in Tools once **Settings → Developer console** is on.
 
 **Limits:** generic OBD2 reads the engine/emissions systems only. ABS, airbags and transmission usually need

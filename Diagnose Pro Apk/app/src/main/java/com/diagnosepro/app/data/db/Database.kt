@@ -70,6 +70,47 @@ data class SampleEntity(
     val value: Double,
 )
 
+@Entity(tableName = "custom_pids")
+data class CustomPidEntity(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val name: String,
+    /** Read-only request, e.g. "0105" or "221234". */
+    val command: String,
+    /** Formula over data bytes A..H, e.g. "(A*256+B)/4". */
+    val formula: String,
+    val unit: String,
+    val minValue: Double = 0.0,
+    val maxValue: Double = 100.0,
+)
+
+@Entity(tableName = "maintenance", indices = [Index("vehicleId")])
+data class MaintenanceEntity(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val vehicleId: Long?,
+    val title: String,
+    val date: Long,
+    val odometerKm: Double?,
+    val cost: Double?,
+    val note: String,
+    /** Remind when the odometer reaches this value (km). */
+    val remindAtKm: Double?,
+)
+
+@Dao
+interface CustomPidDao {
+    @Query("SELECT * FROM custom_pids ORDER BY name") fun observeAll(): Flow<List<CustomPidEntity>>
+    @Insert suspend fun insert(p: CustomPidEntity): Long
+    @Update suspend fun update(p: CustomPidEntity)
+    @Query("DELETE FROM custom_pids WHERE id = :id") suspend fun delete(id: Long)
+}
+
+@Dao
+interface MaintenanceDao {
+    @Query("SELECT * FROM maintenance ORDER BY date DESC") fun observeAll(): Flow<List<MaintenanceEntity>>
+    @Insert suspend fun insert(m: MaintenanceEntity): Long
+    @Query("DELETE FROM maintenance WHERE id = :id") suspend fun delete(id: Long)
+}
+
 @Dao
 interface VehicleDao {
     @Query("SELECT * FROM vehicles ORDER BY createdAt DESC") fun observeAll(): Flow<List<VehicleEntity>>
@@ -102,8 +143,13 @@ interface SessionDao {
     @Query("SELECT * FROM samples WHERE sessionId = :sessionId AND pid = :pid ORDER BY t") suspend fun samples(sessionId: Long, pid: String): List<SampleEntity>
 }
 
-@Database(entities = [VehicleEntity::class, ScanEntity::class, SessionEntity::class, SampleEntity::class], version = 1, exportSchema = true)
+@Database(
+    entities = [VehicleEntity::class, ScanEntity::class, SessionEntity::class, SampleEntity::class, CustomPidEntity::class, MaintenanceEntity::class],
+    version = 2, exportSchema = true,
+)
 abstract class AppDatabase : RoomDatabase() {
+    abstract fun customPids(): CustomPidDao
+    abstract fun maintenance(): MaintenanceDao
     abstract fun vehicles(): VehicleDao
     abstract fun scans(): ScanDao
     abstract fun sessions(): SessionDao

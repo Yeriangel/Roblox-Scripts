@@ -45,7 +45,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.diagnosepro.app.R
 import com.diagnosepro.app.domain.FuelEstimator
-import com.diagnosepro.app.domain.SpeedUnit
 import com.diagnosepro.app.domain.Units
 import com.diagnosepro.app.elm327.RawLogger
 import com.diagnosepro.app.ui.MainViewModel
@@ -106,6 +105,12 @@ fun FuelScreen(vm: MainViewModel, onBack: () -> Unit) {
                 val avg = if (distKm > 0.05) fuelL / distKm * 100 else null
                 LtrText(avg?.let { "${Units.format(FuelEstimator.toUnit(it, units.economy), 1)} $label" } ?: "—", style = MaterialTheme.typography.headlineMedium)
                 LtrText("${Units.format(fuelL, 2)} L · ${Units.format(distKm, 1)} km", style = MaterialTheme.typography.bodyMedium)
+                val price = settings?.fuelPrice ?: 0.0
+                if (price > 0) {
+                    val cur = settings?.currency.orEmpty()
+                    KeyValueRow(stringResource(R.string.fuel_cost), "${Units.format(fuelL * price, 2)} $cur")
+                    avg?.let { KeyValueRow(stringResource(R.string.fuel_cost_100), "${Units.format(it * price, 2)} $cur") }
+                }
                 OutlinedButton(onClick = { fuelL = 0.0; distKm = 0.0; lastT = 0L }) { Text(stringResource(R.string.fuel_reset)) }
             }
         }
@@ -113,59 +118,9 @@ fun FuelScreen(vm: MainViewModel, onBack: () -> Unit) {
 }
 
 @Composable
-fun AccelScreen(vm: MainViewModel, onBack: () -> Unit) {
-    val state by vm.obd.state.collectAsStateWithLifecycle()
-    val live by vm.obd.live.collectAsStateWithLifecycle()
-    val settings by vm.settings.collectAsStateWithLifecycle()
-    val mph = settings?.units?.speed == SpeedUnit.MPH
-    val targetKmh = if (mph) 96.56 else 100.0
-    DisposableEffect(Unit) {
-        vm.obd.setDemand("accel", listOf("speed"))
-        onDispose { vm.obd.setDemand("accel", emptyList()) }
-    }
-    // 0 idle, 1 armed, 2 running, 3 done
-    var phase by remember { mutableIntStateOf(0) }
-    var startT by remember { mutableLongStateOf(0L) }
-    var result by remember { mutableStateOf<Double?>(null) }
-    var best by remember { mutableStateOf<Double?>(null) }
-    val speed = live["speed"]
-    LaunchedEffect(speed?.time) {
-        val v = speed?.value ?: return@LaunchedEffect
-        when (phase) {
-            1 -> if (v > 0.5) { phase = 2; startT = speed.time }
-            2 -> if (v >= targetKmh) {
-                val r = (speed.time - startT) / 1000.0
-                result = r; best = best?.let { minOf(it, r) } ?: r; phase = 3
-            } else if (v < 0.5) phase = 1
-        }
-    }
-    val title = stringResource(if (mph) R.string.tool_accel_mph else R.string.tool_accel)
-    Scaffold(topBar = { BackTopBar(title, onBack) }) { pad ->
-        Column(Modifier.fillMaxSize().padding(pad).padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(stringResource(R.string.accel_text))
-            if (!state.isConnected) { Banner(stringResource(R.string.codes_need_connection)); return@Column }
-            val v = speed?.value ?: 0.0
-            val shown = if (mph) v * 0.621371 else v
-            LtrText("${Units.format(shown, 0)} ${if (mph) "mph" else "km/h"}", style = MaterialTheme.typography.displayLarge, color = Accent)
-            val elapsed = if (phase == 2) (System.currentTimeMillis() - startT) / 1000.0 else result
-            LtrText(elapsed?.let { String.format(Locale.US, "%.2f s", it) } ?: "--.-- s", style = MaterialTheme.typography.displayLarge.copy(fontWeight = FontWeight.Bold, fontSize = 64.sp))
-            Text(
-                when (phase) { 1 -> stringResource(R.string.accel_armed); 2 -> stringResource(R.string.accel_running); 3 -> stringResource(R.string.accel_result); else -> "" },
-                color = if (phase == 3) Ok else MaterialTheme.colorScheme.onSurface, style = MaterialTheme.typography.titleMedium,
-            )
-            best?.let { Text(stringResource(R.string.accel_best, String.format(Locale.US, "%.2f s", it))) }
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                Button(onClick = { if (v < 0.5) { phase = 1; result = null } }, enabled = phase != 2, modifier = Modifier.height(56.dp)) { Text(stringResource(R.string.accel_arm)) }
-                OutlinedButton(onClick = { phase = 0; result = null }, modifier = Modifier.height(56.dp)) { Text(stringResource(R.string.accel_reset)) }
-            }
-            if (v >= 0.5 && phase == 0) Text(stringResource(R.string.accel_need_stop), color = MaterialTheme.colorScheme.error)
-            Text(stringResource(R.string.accel_note), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        }
-    }
-}
-
-@Composable
-fun ConsoleScreen(vm: MainViewModel, onBack: () -> Unit) {
+fun ConsoleScreen(vm: MainViewModel, onBack: () -> Unit, evm: com.diagnosepro.app.ui.ExtrasViewModel = androidx.hilt.navigation.compose.hiltViewModel()) {
+    var command by remember { mutableStateOf("") }
+    var blocked by remember { mutableStateOf(false) }
     val ctx = LocalContext.current
     val clipboard = LocalClipboardManager.current
     val lines by vm.rawLog.lines.collectAsStateWithLifecycle()
@@ -177,14 +132,26 @@ fun ConsoleScreen(vm: MainViewModel, onBack: () -> Unit) {
             IconButton(onClick = { vm.rawLog.clear() }) { Icon(Icons.Filled.DeleteSweep, stringResource(R.string.console_clear)) }
         }
     }) { pad ->
-        if (lines.isEmpty()) { Text(stringResource(R.string.console_empty), Modifier.padding(pad).padding(16.dp)); return@Scaffold }
+        Column(Modifier.fillMaxSize().padding(pad)) {
+        // Terminal: safe adapter commands and read-only OBD services only (see TerminalGuard).
+        Row(Modifier.fillMaxWidth().padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
+            androidx.compose.material3.OutlinedTextField(command, { command = it; blocked = false }, Modifier.weight(1f), singleLine = true,
+                label = { Text(stringResource(R.string.terminal_hint)) }, isError = blocked)
+            Spacer(Modifier.padding(4.dp))
+            Button(enabled = command.isNotBlank(), onClick = {
+                if (com.diagnosepro.app.obd.TerminalGuard.isAllowed(command)) { evm.send(command); command = "" } else blocked = true
+            }) { Text(stringResource(R.string.terminal_send)) }
+        }
+        if (blocked) Text(stringResource(R.string.terminal_blocked), Modifier.padding(horizontal = 12.dp), color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+        if (lines.isEmpty()) Text(stringResource(R.string.console_empty), Modifier.padding(16.dp))
         // Raw protocol text is always shown LTR, also in Hebrew.
-        LazyColumn(Modifier.fillMaxSize().padding(pad).padding(horizontal = 8.dp), reverseLayout = true) {
+        LazyColumn(Modifier.fillMaxSize().padding(horizontal = 8.dp), reverseLayout = true) {
             items(lines.asReversed()) { l ->
                 val color = when (l.direction) { RawLogger.Direction.TX -> Accent; RawLogger.Direction.RX -> MaterialTheme.colorScheme.onSurface; RawLogger.Direction.INFO -> Color(0xFF4FC3F7) }
                 LtrText("${fmt.format(Date(l.time))} ${if (l.direction == RawLogger.Direction.TX) ">" else if (l.direction == RawLogger.Direction.RX) "<" else "#"} ${l.text}",
                     style = MaterialTheme.typography.bodySmall.copy(fontFamily = FontFamily.Monospace), color = color, modifier = Modifier.fillMaxWidth())
             }
+        }
         }
     }
 }
