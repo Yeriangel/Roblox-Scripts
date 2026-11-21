@@ -90,6 +90,7 @@ fun ToolsScreen(vm: MainViewModel, nav: NavController) {
     data class T(val icon: ImageVector, val title: Int, val desc: Int, val route: String)
     val tools = buildList {
         add(T(Icons.Filled.Search, R.string.tool_fullscan, R.string.tool_fullscan_desc, Routes.FULLSCAN))
+        add(T(Icons.Filled.Search, R.string.tool_glossary, R.string.tool_glossary_desc, Routes.GLOSSARY))
         add(T(Icons.Filled.Build, R.string.tool_selftest, R.string.tool_selftest_desc, Routes.SELFTEST))
         add(T(Icons.AutoMirrored.Filled.FactCheck, R.string.rd_title, R.string.tool_readiness_desc, Routes.READINESS))
         add(T(Icons.Filled.CameraAlt, R.string.ff_title, R.string.tool_freeze_desc, Routes.FREEZE))

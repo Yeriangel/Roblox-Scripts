@@ -631,4 +631,41 @@
     <string name="did_hardware">Hardware version</string>
     <string name="custom_header">Module address (optional)</string>
     <string name="custom_header_hint">To read a module other than the engine, enter its address from Full system scan, e.g. 7B0. Leave empty for the engine.</string>
+
+    <!-- System glossary -->
+    <string name="gl_ecm">Engine computer. Controls fuel, ignition and emissions.</string>
+    <string name="gl_tcm">Transmission computer. Controls gear changes in automatic gearboxes.</string>
+    <string name="gl_bcm">Body control module. Lights, locks, windows, wipers and other body electrics.</string>
+    <string name="gl_abs">Anti-lock brakes. Keeps the wheels from locking under hard braking.</string>
+    <string name="gl_vsa">Vehicle stability assist (Honda\'s name for ESP). Brakes single wheels to stop a skid.</string>
+    <string name="gl_srs">Airbags and seat-belt pretensioners.</string>
+    <string name="gl_eps">Electric power steering.</string>
+    <string name="gl_epb">Electric parking brake.</string>
+    <string name="gl_tpms">Tire pressure monitoring.</string>
+    <string name="gl_dbw">Drive-by-wire: electronic throttle with no cable from the pedal.</string>
+    <string name="gl_ima">Integrated motor assist: Honda\'s hybrid electric motor system.</string>
+    <string name="gl_vtm4">Variable torque management: Honda\'s automatic four-wheel drive.</string>
+    <string name="gl_shawd">Super-handling all-wheel drive: sends more power to the outer rear wheel in a turn.</string>
+    <string name="gl_atts">Active torque transfer system: shifts drive between the front wheels in a turn.</string>
+    <string name="gl_4ws">Four-wheel steering: the rear wheels steer slightly too.</string>
+    <string name="gl_ads">Adaptive damper system: shock absorbers that change stiffness while driving.</string>
+    <string name="gl_hydrbst">Hydraulic brake booster.</string>
+    <string name="gl_acc">Adaptive cruise control: keeps a set distance from the car ahead.</string>
+    <string name="gl_cmbs">Collision mitigation braking: warns and brakes before a frontal crash.</string>
+    <string name="gl_lkas">Lane keeping assist: steers gently to stay in the lane.</string>
+    <string name="gl_bsi">Blind spot information: warns about a car in the blind spot.</string>
+    <string name="gl_mvcs">Multi-view camera system (surround cameras).</string>
+    <string name="gl_opds">Occupant position detection: switches the passenger side airbag off for a child or a leaning passenger.</string>
+    <string name="gl_ept">Electric seat-belt pretensioner.</string>
+    <string name="gl_hvac">Heating, ventilation and air conditioning.</string>
+    <string name="gl_egr">Exhaust gas recirculation: lowers NOx emissions.</string>
+    <string name="gl_dpf">Diesel particulate filter.</string>
+    <string name="gl_immo">Immobilizer: lets the engine start only with a recognised key.</string>
+    <string name="tool_glossary">System names explained</string>
+    <string name="tool_glossary_desc">What ECM, BCM, VSA, CMBS and other abbreviations mean</string>
+    <string name="fs_summary">%1$d systems found, %2$d with faults</string>
+    <string name="fs_group_powertrain">Powertrain</string>
+    <string name="fs_group_chassis">Chassis and safety</string>
+    <string name="fs_group_body">Body and comfort</string>
+    <string name="fs_group_other">Other modules</string>
 </resources>

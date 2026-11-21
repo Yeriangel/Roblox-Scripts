@@ -57,6 +57,13 @@ class Elm327(
 
         suspend fun query(command: String, timeoutMs: Long = defaultTimeoutMs) = queryLocked(command, timeoutMs)
 
+        /** Like [query] but keeps negative responses ("7F ..."), which still prove a module is there. */
+        suspend fun queryRaw(command: String, timeoutMs: Long = defaultTimeoutMs): List<EcuMessage> =
+            when (val r = sendLocked(command, timeoutMs, true)) {
+                is ElmResult.Data -> ObdFrames.assemble(r.lines.filter { ElmResponseParser.isHexLine(it) }, protocol, headersOn)
+                is ElmResult.Error -> emptyList()
+            }
+
         suspend fun setHeaders(on: Boolean) {
             if (headersOn == on) return
             val r = sendLocked(if (on) "ATH1" else "ATH0", defaultTimeoutMs, true)

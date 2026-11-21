@@ -635,4 +635,41 @@
     <string name="did_hardware">גרסת חומרה</string>
     <string name="custom_header">כתובת יחידה (לא חובה)</string>
     <string name="custom_header_hint">כדי לקרוא יחידה שאינה המנוע, הזינו את הכתובת שלה מסריקת כל המערכות, למשל 7B0. השאירו ריק עבור המנוע.</string>
+
+    <!-- System glossary -->
+    <string name="gl_ecm">מחשב המנוע. שולט בדלק, בהצתה ובפליטה.</string>
+    <string name="gl_tcm">מחשב תיבת ההילוכים. שולט בהחלפת ההילוכים בתיבה אוטומטית.</string>
+    <string name="gl_bcm">יחידת בקרת הגוף. אורות, נעילה, חלונות, מגבים ושאר חשמל המרכב.</string>
+    <string name="gl_abs">מערכת למניעת נעילת גלגלים בבלימה חזקה.</string>
+    <string name="gl_vsa">בקרת יציבות (השם של הונדה ל-ESP). בולמת גלגל בודד כדי למנוע החלקה.</string>
+    <string name="gl_srs">כריות אוויר ומותחני חגורות.</string>
+    <string name="gl_eps">הגה כוח חשמלי.</string>
+    <string name="gl_epb">בלם חניה חשמלי.</string>
+    <string name="gl_tpms">ניטור לחץ אוויר בצמיגים.</string>
+    <string name="gl_dbw">מצערת אלקטרונית, בלי כבל מהדוושה.</string>
+    <string name="gl_ima">מערכת המנוע החשמלי בהיברידיות של הונדה.</string>
+    <string name="gl_vtm4">הנעה כפולה אוטומטית של הונדה, שמחלקת כוח לגלגלים האחוריים לפי הצורך.</string>
+    <string name="gl_shawd">הנעה כפולה שמעבירה יותר כוח לגלגל האחורי החיצוני בפנייה.</string>
+    <string name="gl_atts">מערכת שמעבירה כוח בין הגלגלים הקדמיים בפנייה.</string>
+    <string name="gl_4ws">היגוי בארבעה גלגלים: גם הגלגלים האחוריים פונים מעט.</string>
+    <string name="gl_ads">בולמי זעזועים שמשנים קשיחות תוך כדי נסיעה.</string>
+    <string name="gl_hydrbst">מגבר בלם הידראולי.</string>
+    <string name="gl_acc">בקרת שיוט אדפטיבית: שומרת מרחק מהרכב שלפנים.</string>
+    <string name="gl_cmbs">בלימת חירום אוטומטית: מתריעה ובולמת לפני התנגשות חזיתית.</string>
+    <string name="gl_lkas">סיוע לשמירה על נתיב: מתקן בעדינות את ההגה.</string>
+    <string name="gl_bsi">התרעה על רכב בשטח מת.</string>
+    <string name="gl_mvcs">מערכת מצלמות היקפית.</string>
+    <string name="gl_opds">זיהוי תנוחת נוסע: מנטרל את כרית האוויר הצדדית כשיושב ילד או כשהנוסע נשען.</string>
+    <string name="gl_ept">מותחן חגורה חשמלי.</string>
+    <string name="gl_hvac">חימום, אוורור ומיזוג.</string>
+    <string name="gl_egr">מחזור גזי פליטה, להפחתת פליטת NOx.</string>
+    <string name="gl_dpf">מסנן חלקיקים בדיזל.</string>
+    <string name="gl_immo">אימובילייזר: מאפשר התנעה רק עם מפתח מזוהה.</string>
+    <string name="tool_glossary">הסבר על שמות המערכות</string>
+    <string name="tool_glossary_desc">מה המשמעות של ECM, BCM, VSA, CMBS וקיצורים נוספים</string>
+    <string name="fs_summary">נמצאו %1$d מערכות, ב-%2$d מהן יש תקלות</string>
+    <string name="fs_group_powertrain">מערכת ההנעה</string>
+    <string name="fs_group_chassis">שלדה ובטיחות</string>
+    <string name="fs_group_body">גוף ונוחות</string>
+    <string name="fs_group_other">יחידות נוספות</string>
 </resources>

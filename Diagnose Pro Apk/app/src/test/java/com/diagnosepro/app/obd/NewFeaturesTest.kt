@@ -72,6 +72,15 @@ class NewFeaturesTest {
         assertTrue(Uds.decodeDtcs(intArrayOf(0x59, 0x02, 0xFF))!!.isEmpty())
     }
 
+    @Test fun kwpDtcsAndAliveCheck() {
+        val r = Uds.decodeKwpDtcs(intArrayOf(0x58, 0x02, 0x91, 0x23, 0xE0, 0x00, 0x00, 0x00))!!
+        assertEquals(listOf("B1123"), r.map { it.code })
+        assertNull(Uds.decodeKwpDtcs(intArrayOf(0x7F, 0x18, 0x11)))
+        assertTrue(Uds.isAlive(intArrayOf(0x50, 0x01))); assertTrue(Uds.isAlive(intArrayOf(0x7F, 0x10, 0x12)))
+        assertFalse(Uds.isAlive(intArrayOf(0x7F, 0x19, 0x11))); assertFalse(Uds.isAlive(intArrayOf()))
+        assertEquals(Uds.Group.CHASSIS, Uds.groupOf(ModuleKind.AIRBAG)); assertEquals(Uds.Group.OTHER, Uds.groupOf(ModuleKind.UNKNOWN))
+    }
+
     @Test fun moduleNaming() {
         assertEquals(ModuleKind.ABS, Uds.moduleKind("DA28F1", "28", true, null))        // SAE J2178
         assertEquals(ModuleKind.AIRBAG, Uds.moduleKind("DA58F1", "58", true, "Honda"))
@@ -89,13 +98,17 @@ class NewFeaturesTest {
         elm.initialize()
         val obd = ObdService(elm)
         val mods = obd.scanModules("Volkswagen") { _, _ -> }!!
-        assertEquals(setOf("7E0", "713", "715", "70E"), mods.map { it.requestId }.toSet())
+        assertEquals(setOf("7E0", "713", "715", "70E", "746"), mods.map { it.requestId }.toSet())
+        // 746 refuses UDS ("7F 10 12") but is still detected, and its codes come from the KWP2000 request
+        val old = mods.first { it.requestId == "746" }
+        assertEquals(ModuleKind.HVAC, old.kind)
+        assertEquals(listOf("B1123"), old.dtcs!!.map { it.code }); assertEquals(-1, old.dtcs!![0].failureType)
         assertEquals(ModuleKind.ABS, mods.first { it.requestId == "713" }.kind)
         assertEquals(listOf("C0035"), mods.first { it.requestId == "713" }.dtcs!!.map { it.code })
         assertTrue(mods.first { it.requestId == "715" }.dtcs!!.isEmpty())
         // Only AT commands, 10 01 and 19 02 may have been sent during the scan
         val obdCmds = sent.filterNot { it.startsWith("AT") || it.startsWith("retry") }
-        assertTrue(obdCmds.toString(), obdCmds.none { it.startsWith("04") || it.startsWith("14") || it.startsWith("2E") || it.startsWith("31") || it.startsWith("11") })
+        assertTrue(obdCmds.toString(), obdCmds.all { it == "1001" || it.startsWith("1902") || it == "1802FF00" || it.startsWith("01") || it.startsWith("09") } && obdCmds.none { it.startsWith("04") || it.startsWith("14") || it.startsWith("2E") || it.startsWith("31") || it.startsWith("11") })
         // Adapter restored: normal OBD reads work again and headers are off
         assertFalse(elm.headersOn)
         assertNotNull(obd.readPid(Pids.byKey("rpm")!!))

@@ -85,6 +85,12 @@ class DemoTransport(
         val mode = cmd.substring(0, 2).toInt(16)
         val pid = if (cmd.length >= 4) cmd.substring(2, 4).toInt(16) else -1
         // UDS (full-system scan): four simulated modules answer on their own addresses.
+        // An older KWP2000-style module: refuses UDS session/DTC requests, answers "18 02 FF 00".
+        if (txId == "746" && mode in setOf(0x10, 0x19, 0x18)) return prefix + when (mode) {
+            0x10 -> frame("74E", listOf(0x7F, 0x10, 0x12))
+            0x19 -> frame("74E", listOf(0x7F, 0x19, 0x11))
+            else -> frame("74E", listOf(0x58, 0x01, 0x91, 0x23, 0xE0))   // B1123
+        }
         if (mode == 0x10 || mode == 0x19 || (mode == 0x22 && cmd.startsWith("22F1"))) return prefix + uds(mode, cmd)
         if (txId != "7DF" && txId != "7E0") {
             // Custom PID aimed at one of the simulated modules: answer with the RPM word.

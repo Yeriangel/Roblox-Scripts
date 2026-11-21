@@ -30,6 +30,8 @@ import androidx.navigation.NavController
 import com.diagnosepro.app.R
 import com.diagnosepro.app.i18n.Bidi
 import com.diagnosepro.app.obd.ModuleKind
+import com.diagnosepro.app.obd.Uds
+import com.diagnosepro.app.ui.components.SectionTitle
 import com.diagnosepro.app.ui.ExtrasViewModel
 import com.diagnosepro.app.ui.MainViewModel
 import com.diagnosepro.app.ui.components.BackTopBar
@@ -96,41 +98,59 @@ fun FullScanScreen(vm: MainViewModel, onBack: () -> Unit, nav: NavController, ev
                 if (list == null) item { Banner(stringResource(R.string.fs_not_can)) }
                 else if (list.isEmpty()) item { Banner(stringResource(R.string.fs_none)) }
             }
-            if (list != null) items(list, key = { it.requestId }) { m ->
-                val faults = m.dtcs?.size ?: 0
-                InfoCard {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Column(Modifier.weight(1f)) {
-                            Text(stringResource(kindName(m.kind)), style = MaterialTheme.typography.titleMedium, color = if (faults > 0) Danger else Ok)
-                            LtrText(m.requestId, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        }
-                        when {
-                            m.dtcs == null -> Text(stringResource(R.string.fs_no_dtc_service), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelMedium)
-                            faults == 0 -> Text(stringResource(R.string.fs_normal), color = Ok, style = MaterialTheme.typography.titleMedium)
-                            else -> LtrText(faults.toString(), style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold), color = Danger)
-                        }
-                    }
-                    val infoMap = info[m.requestId]
-                    if (infoMap == null) {
-                        TextButton(onClick = { evm.readModuleInfo(m.requestId) }, enabled = infoBusy == null && progress == null) {
-                            Text(stringResource(if (infoBusy == m.requestId) R.string.loading else R.string.fs_details))
-                        }
-                    } else if (infoMap.isEmpty()) {
-                        Text(stringResource(R.string.fs_no_details), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    } else infoMap.forEach { (did, value) -> KeyValueRow(stringResource(didName(did)), value) }
-                    m.dtcs?.forEach { d ->
-                        val info = lookup?.lookup(d.code, hebrew)
-                        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                            TextButton(onClick = { nav.navigate(Routes.code(d.code)) }) {
-                                LtrText("${d.code}-%02X".format(d.failureType), style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold))
+            if (list != null && list.isNotEmpty()) {
+                item {
+                    val faulty = list.count { !it.dtcs.isNullOrEmpty() }
+                    Text(stringResource(R.string.fs_summary, list.size, faulty), style = MaterialTheme.typography.titleMedium, color = if (faulty > 0) Danger else Ok)
+                }
+                // Grouped like a system map: powertrain, chassis and safety, body, other.
+                for (group in Uds.Group.entries) {
+                    val inGroup = list.filter { Uds.groupOf(it.kind) == group }
+                    if (inGroup.isEmpty()) continue
+                    item { SectionTitle(stringResource(when (group) {
+                        Uds.Group.POWERTRAIN -> R.string.fs_group_powertrain
+                        Uds.Group.CHASSIS -> R.string.fs_group_chassis
+                        Uds.Group.BODY -> R.string.fs_group_body
+                        Uds.Group.OTHER -> R.string.fs_group_other
+                    })) }
+                    items(inGroup, key = { it.requestId }) { m ->
+                    val faults = m.dtcs?.size ?: 0
+                    InfoCard {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Column(Modifier.weight(1f)) {
+                                Text(stringResource(kindName(m.kind)), style = MaterialTheme.typography.titleMedium, color = if (faults > 0) Danger else Ok)
+                                LtrText(m.requestId, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             }
-                            Text(info?.description ?: stringResource(R.string.detail_manufacturer), Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium)
-                            Spacer(Modifier.width(6.dp))
-                            Text(stringResource(if (d.current) R.string.fs_current else R.string.codes_pending), color = if (d.current) Danger else Warn, style = MaterialTheme.typography.labelMedium)
+                            when {
+                                m.dtcs == null -> Text(stringResource(R.string.fs_no_dtc_service), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelMedium)
+                                faults == 0 -> Text(stringResource(R.string.fs_normal), color = Ok, style = MaterialTheme.typography.titleMedium)
+                                else -> LtrText(faults.toString(), style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold), color = Danger)
+                            }
+                        }
+                        val infoMap = info[m.requestId]
+                        if (infoMap == null) {
+                            TextButton(onClick = { evm.readModuleInfo(m.requestId) }, enabled = infoBusy == null && progress == null) {
+                                Text(stringResource(if (infoBusy == m.requestId) R.string.loading else R.string.fs_details))
+                            }
+                        } else if (infoMap.isEmpty()) {
+                            Text(stringResource(R.string.fs_no_details), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        } else infoMap.forEach { (did, value) -> KeyValueRow(stringResource(didName(did)), value) }
+                        m.dtcs?.forEach { d ->
+                            val info = lookup?.lookup(d.code, hebrew)
+                            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                                TextButton(onClick = { nav.navigate(Routes.code(d.code)) }) {
+                                    LtrText(if (d.failureType >= 0) "${d.code}-%02X".format(d.failureType) else d.code, style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold))
+                                }
+                                Text(info?.description ?: stringResource(R.string.detail_manufacturer), Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium)
+                                Spacer(Modifier.width(6.dp))
+                                Text(stringResource(if (d.current) R.string.fs_current else R.string.codes_pending), color = if (d.current) Danger else Warn, style = MaterialTheme.typography.labelMedium)
+                            }
                         }
                     }
                 }
+                }
             }
+            item { TextButton(onClick = { nav.navigate(Routes.GLOSSARY) }) { Text(stringResource(R.string.tool_glossary)) } }
             item { Text(stringResource(R.string.fs_limits, Bidi.ltr("ELM327")), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant); Spacer(Modifier.height(16.dp)) }
         }
     }

@@ -219,13 +219,16 @@ class ObdService(val elm: Elm327) {
                 targets.forEachIndexed { i, target ->
                     progress(i, targets.size)
                     if (send("ATSH$target").isOk) {
-                        query("1001", 1_500).messagesOrEmpty().firstOrNull { it.bytes.firstOrNull() == 0x50 }?.let { found[target] = it.ecu }
+                        // A refusal ("7F 10 xx") also proves a module lives at this address.
+                        queryRaw("1001", 1_500).firstOrNull { Uds.isAlive(it.bytes) }?.let { found[target] = it.ecu }
                     }
                 }
                 send("ATST64")                       // longer wait for multi-frame DTC lists
                 found.map { (target, ecu) ->
                     send("ATSH$target")
+                    // UDS first; older modules answer the KWP2000 request instead.
                     val dtcs = query("1902%02X".format(Uds.STATUS_MASK), 4_000).messagesOrEmpty().firstNotNullOfOrNull { Uds.decodeDtcs(it.bytes) }
+                        ?: queryRaw("1802FF00", 4_000).firstNotNullOfOrNull { Uds.decodeKwpDtcs(it.bytes) }
                     val address = if (extended) ecu else target
                     ModuleResult(target, address, Uds.moduleKind(target, ecu, extended, manufacturer), dtcs)
                 }
