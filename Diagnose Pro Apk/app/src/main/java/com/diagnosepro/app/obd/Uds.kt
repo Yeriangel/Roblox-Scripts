@@ -35,6 +35,36 @@ object Uds {
         return out.distinctBy { it.code to it.failureType }
     }
 
+    /**
+     * KWP2000 (ISO 14230-3) answer to "18 02 FF 00": "58 <count> [DTC hi, DTC lo, status]...".
+     * Used by many 2003-2012 cars that do not speak UDS yet. No failure-type byte (-1).
+     */
+    fun decodeKwpDtcs(bytes: IntArray): List<UdsDtc>? {
+        if (bytes.size < 2 || bytes[0] != 0x58) return null
+        val out = mutableListOf<UdsDtc>()
+        var i = 2
+        while (i + 2 < bytes.size) {
+            val hi = bytes[i]; val lo = bytes[i + 1]
+            if (hi != 0 || lo != 0) out += UdsDtc(ObdDecoders.dtcFromBytes(hi, lo), -1, 0x08)
+            i += 3
+        }
+        return out.distinctBy { it.code }
+    }
+
+    /** True if [bytes] show that a module answered the session request (positive, or a refusal). */
+    fun isAlive(bytes: IntArray): Boolean =
+        bytes.firstOrNull() == 0x50 || (bytes.size >= 2 && bytes[0] == 0x7F && bytes[1] == 0x10)
+
+    enum class Group { POWERTRAIN, CHASSIS, BODY, OTHER }
+
+    fun groupOf(kind: ModuleKind): Group = when (kind) {
+        ModuleKind.ENGINE, ModuleKind.TRANSMISSION -> Group.POWERTRAIN
+        ModuleKind.ABS, ModuleKind.STEERING, ModuleKind.SUSPENSION, ModuleKind.AIRBAG -> Group.CHASSIS
+        ModuleKind.CLUSTER, ModuleKind.BODY, ModuleKind.HVAC, ModuleKind.GATEWAY, ModuleKind.LIGHTING,
+        ModuleKind.ENTERTAINMENT, ModuleKind.SECURITY -> Group.BODY
+        ModuleKind.UNKNOWN -> Group.OTHER
+    }
+
     /** Standard identification data ids (ISO 14229 Annex C). */
     val IDENT_DIDS = listOf(0xF197, 0xF187, 0xF18C, 0xF195, 0xF189, 0xF191, 0xF190)
 
