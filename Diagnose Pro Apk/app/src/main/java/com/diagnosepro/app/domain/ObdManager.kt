@@ -445,6 +445,10 @@ class ObdManager @Inject constructor(
     suspend fun readMode06(): List<ObdDecoders.Mode06Result>? = withObd { it.readMode06() }
     suspend fun readVoltage(): Double? = withObd { it.readVoltage() }
 
+    /** Read-only check of every read function against the connected car. */
+    suspend fun runSelfTest(progress: (Int, Int) -> Unit): List<TestStep>? =
+        withObd { SelfTest(it, (_state.value as? ConnectionState.Connected)?.adapter).run(progress) }
+
     /** Developer terminal. Refuses anything that is not a safe adapter command or a read-only service. */
     suspend fun sendRaw(command: String): String? {
         if (!TerminalGuard.isAllowed(command)) return null

@@ -175,6 +175,12 @@ class AppUiTest {
             clickText(s(desc))
             waitText(s(waitFor))
         }
+        openTool(R.string.tool_selftest_desc, R.string.st_run)
+        clickText(s(R.string.st_run))
+        waitText(s(R.string.st_live), 60_000)
+        rule.waitUntil(60_000) { rule.onAllNodesWithText(s(R.string.st_run)).fetchSemanticsNodes().isNotEmpty() }
+        shot(lang, "26_selftest")
+        rule.activity.onBackPressedDispatcher.onBackPressed()
         openTool(R.string.tool_sensors_desc, R.string.pid_rpm)
         rule.waitUntil(30_000) {
             val live = androidx.lifecycle.ViewModelProvider(rule.activity)[MainViewModel::class.java].obd.live.value

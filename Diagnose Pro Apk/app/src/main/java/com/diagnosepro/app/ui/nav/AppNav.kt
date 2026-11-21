@@ -108,6 +108,7 @@ object Routes {
     const val BATTERY = "battery"
     const val DTC_SEARCH = "dtc_search"
     const val MAINTENANCE = "maintenance"
+    const val SELFTEST = "selftest"
     fun code(code: String, ecu: String? = null, kind: String? = null) = "code/$code?ecu=${ecu.orEmpty()}&kind=${kind.orEmpty()}"
     fun scan(id: Long) = "scan/$id"
     fun session(id: Long) = "session/$id"
@@ -236,6 +237,7 @@ private fun AppNavHost(nav: NavHostController, vm: MainViewModel, start: String)
         composable(Routes.BATTERY) { BatteryTestScreen(vm, back) }
         composable(Routes.DTC_SEARCH) { DtcSearchScreen(vm, back, nav) }
         composable(Routes.MAINTENANCE) { MaintenanceScreen(vm, back) }
+        composable(Routes.SELFTEST) { com.diagnosepro.app.ui.screens.SelfTestScreen(vm, back) }
         composable(Routes.CONSOLE) { ConsoleScreen(vm, back) }
         composable(Routes.ABOUT) { AboutScreen(back) }
         composable(

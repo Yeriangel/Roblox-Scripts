@@ -570,4 +570,18 @@
     <string name="set_currency">מטבע</string>
     <string name="fuel_cost">עלות הדלק בנסיעה</string>
     <string name="fuel_cost_100">עלות ל-100 ק״מ</string>
+
+    <string name="tool_selftest">בדיקה עצמית (מתאם ורכב)</string>
+    <string name="tool_selftest_desc">בדיקה שכל פעולות הקריאה עובדות ברכב שלכם</string>
+    <string name="st_note">מריץ פעם אחת כל פעולת קריאה מול הרכב המחובר ומציג מה עבד. הבדיקה רק קוראת: היא לא מוחקת קודים ולא משנה שום דבר. לוקח בערך דקה.</string>
+    <string name="st_run">הרצת בדיקה עצמית</string>
+    <string name="st_running">בודק…</string>
+    <string name="st_share">שיתוף הדוח</string>
+    <string name="st_all_ok">כל מה שהרכב שלכם תומך בו עובד.</string>
+    <string name="st_some_failed">%1$d בדיקות נכשלו</string>
+    <string name="st_share_hint">פריטים באפור הם פעולות שהרכב הזה לא מספק, וזה תקין. אם משהו אדום, הקישו על סמל השיתוף ושלחו את הדוח.</string>
+    <string name="st_adapter">מתאם ופרוטוקול</string>
+    <string name="st_supported">חיישנים נתמכים</string>
+    <string name="st_live">נתונים חיים</string>
+    <string name="st_speed">סל״ד ומהירות</string>
 </resources>

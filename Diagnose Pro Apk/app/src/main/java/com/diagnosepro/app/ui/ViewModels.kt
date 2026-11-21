@@ -92,7 +92,11 @@ class MainViewModel @Inject constructor(
     fun setAlerts(rules: List<com.diagnosepro.app.domain.AlertRule>) = viewModelScope.launch { settingsRepo.setAlerts(rules) }
     fun setAlertSound(v: Boolean) = viewModelScope.launch { settingsRepo.setAlertSound(v) }
     fun setFuelPrice(price: Double, currency: String) = viewModelScope.launch { settingsRepo.setFuelPrice(price, currency) }
-    fun startLogging() = viewModelScope.launch { obd.startLogging(settingsRepo.current().logPids) }
+    /** Records the gauges chosen for this vehicle plus the basics needed for the trip summary. */
+    fun startLogging() = viewModelScope.launch {
+        val gauges = obd.vehicle.value?.gauges?.split(',')?.filter { it.isNotBlank() }.orEmpty()
+        obd.startLogging((gauges + settingsRepo.current().logPids).distinct())
+    }
     fun stopLogging() = obd.stopLogging()
 }
 
@@ -165,6 +169,15 @@ class ExtrasViewModel @Inject constructor(private val repo: com.diagnosepro.app.
     fun deleteCustomPid(id: Long) = viewModelScope.launch { repo.deleteCustomPid(id) }
     fun addMaintenance(m: com.diagnosepro.app.data.db.MaintenanceEntity) = viewModelScope.launch { repo.addMaintenance(m) }
     fun deleteMaintenance(id: Long) = viewModelScope.launch { repo.deleteMaintenance(id) }
+    val testSteps = MutableStateFlow<List<com.diagnosepro.app.domain.TestStep>?>(null)
+    val testProgress = MutableStateFlow<Pair<Int, Int>?>(null)
+    fun runSelfTest() {
+        if (testProgress.value != null) return
+        viewModelScope.launch {
+            testProgress.value = 0 to 1
+            try { testSteps.value = obd.runSelfTest { done, total -> testProgress.value = done to total } } finally { testProgress.value = null }
+        }
+    }
     fun send(command: String) = viewModelScope.launch { obd.sendRaw(command) }
     suspend fun voltage(): Double? = obd.readVoltage()
 }

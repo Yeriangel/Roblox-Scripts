@@ -566,4 +566,18 @@
     <string name="set_currency">Currency</string>
     <string name="fuel_cost">Trip fuel cost</string>
     <string name="fuel_cost_100">Cost per 100 km</string>
+
+    <string name="tool_selftest">Self-test (adapter and car)</string>
+    <string name="tool_selftest_desc">Check that every read function works on your car</string>
+    <string name="st_note">Runs every read function once on the connected car and shows what worked. It only reads: it never clears codes or changes anything. Takes about a minute.</string>
+    <string name="st_run">Run self-test</string>
+    <string name="st_running">Testing…</string>
+    <string name="st_share">Share report</string>
+    <string name="st_all_ok">Everything that your car supports works.</string>
+    <string name="st_some_failed">%1$d checks failed</string>
+    <string name="st_share_hint">Grey items are functions this car does not provide; that is normal. If something is red, tap the share icon and send the report.</string>
+    <string name="st_adapter">Adapter and protocol</string>
+    <string name="st_supported">Supported sensors</string>
+    <string name="st_live">Live data</string>
+    <string name="st_speed">RPM and speed</string>
 </resources>
