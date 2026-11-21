@@ -1,0 +1,445 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Diagnose Pro</string>
+    <string name="demo_badge">DEMO</string>
+
+    <!-- Navigation -->
+    <string name="nav_dashboard">Dashboard</string>
+    <string name="nav_codes">Codes</string>
+    <string name="nav_graph">Live graph</string>
+    <string name="nav_history">History</string>
+    <string name="nav_settings">Settings</string>
+
+    <!-- Common -->
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="close">Close</string>
+    <string name="retry">Try again</string>
+    <string name="back">Back</string>
+    <string name="share">Share</string>
+    <string name="delete">Delete</string>
+    <string name="save">Save</string>
+    <string name="connect">Connect</string>
+    <string name="disconnect">Disconnect</string>
+    <string name="next">Next</string>
+    <string name="skip">Skip</string>
+    <string name="done">Done</string>
+    <string name="copy">Copy</string>
+    <string name="copied">Copied</string>
+    <string name="loading">Loading…</string>
+    <string name="not_available">—</string>
+    <string name="search_web">Search the web</string>
+    <string name="export_csv">Export CSV</string>
+    <string name="more">More</string>
+
+    <!-- Connection status -->
+    <string name="status_disconnected">Disconnected</string>
+    <string name="status_connecting">Connecting to %1$s…</string>
+    <string name="status_init_resetting">Initializing adapter…</string>
+    <string name="status_init_configuring">Configuring adapter…</string>
+    <string name="status_searching_protocol">Searching protocol…</string>
+    <string name="status_reading_info">Reading vehicle info…</string>
+    <string name="status_connected">Connected (%1$s)</string>
+    <string name="status_reconnecting">Connection lost, reconnecting (attempt %1$d) in %2$d s…</string>
+    <string name="status_error">Error: %1$s</string>
+    <string name="vehicle_not_responding">The adapter is connected, but the car is not answering. Is the ignition on?</string>
+
+    <string name="error_bluetooth_off">Bluetooth is off</string>
+    <string name="error_permission">Bluetooth permission is missing</string>
+    <string name="error_device_not_found">Adapter not found</string>
+    <string name="error_socket_failed">Could not connect to the adapter</string>
+    <string name="error_no_obd_service">This Bluetooth device is not an OBD adapter</string>
+    <string name="error_timeout">The adapter did not respond in time</string>
+    <string name="error_not_elm">The device does not answer like an ELM327 adapter</string>
+    <string name="error_no_vehicle">The car is not responding</string>
+    <string name="error_bus_error">Communication error on the car bus</string>
+    <string name="error_link_lost">Connection to the adapter was lost</string>
+    <string name="error_unknown">Unexpected error</string>
+    <string name="error_hint_bluetooth_off">Turn Bluetooth on and try again.</string>
+    <string name="error_hint_permission">Allow the Bluetooth permission so the app can talk to the adapter.</string>
+    <string name="error_hint_device_not_found">Make sure the adapter is plugged in and paired in the phone Bluetooth settings.</string>
+    <string name="error_hint_socket_failed">Check that the adapter is plugged in and its light is on. Close other OBD apps that may be using it, then try again.</string>
+    <string name="error_hint_no_obd_service">Pick your OBD adapter from the list (names like OBDII, ELM327, V-LINK).</string>
+    <string name="error_hint_timeout">Unplug the adapter for 10 seconds, plug it back in and try again.</string>
+    <string name="error_hint_not_elm">Choose a different device from the list, or unplug and reconnect the adapter.</string>
+    <string name="error_hint_no_vehicle">Turn the ignition ON (or start the engine) and try again. Very old cars (before 2001 in Europe / 1996 in the US) may not support OBD2.</string>
+    <string name="error_hint_bus_error">Turn the ignition off and on again, then reconnect. If this keeps happening, the adapter may not support your car\'s protocol.</string>
+    <string name="error_hint_link_lost">Check that the adapter is still plugged in and the phone is close to the car.</string>
+    <string name="error_hint_unknown">Try again. If it keeps happening, enable the developer console in Settings to see details.</string>
+
+    <string name="clone_warning_title">Adapter may be a clone</string>
+    <string name="clone_warning_text">Your adapter looks like a low-cost ELM327 clone (%1$s). Most features usually work, but readings may be slower and some commands may fail.</string>
+
+    <!-- Onboarding -->
+    <string name="onb_title_1">Plug in the adapter</string>
+    <string name="onb_text_1">Find the OBD2 port under the steering wheel (near the pedals) and plug the ELM327 adapter in. Then turn the ignition ON or start the engine.</string>
+    <string name="onb_title_2">Pair it with your phone</string>
+    <string name="onb_text_2">Open the phone Bluetooth settings and pair the adapter. Its name is usually OBDII, ELM327 or V-LINK. The common PIN is 1234 or 0000. (BLE adapters do not need pairing.)</string>
+    <string name="onb_title_3">Connect in the app</string>
+    <string name="onb_text_3">Tap the connection status at the top, pick your adapter and you are ready. No adapter yet? Try Demo mode to explore every screen.</string>
+    <string name="onb_get_started">Get started</string>
+    <string name="limits_note">Generic OBD2 reads the engine and emissions systems. ABS, airbags and transmission usually need brand-specific tools.</string>
+
+    <!-- Permissions / Bluetooth -->
+    <string name="perm_title">Bluetooth access</string>
+    <string name="perm_text">Diagnose Pro uses Bluetooth only to talk to your OBD adapter. It does not use your location and does not send any data to the internet.</string>
+    <string name="perm_text_legacy">On this Android version, scanning for Bluetooth devices requires the Location permission. The app does not use or store your location.</string>
+    <string name="perm_grant">Allow</string>
+    <string name="perm_denied_forever">The permission was denied. Open the app settings and allow \"Nearby devices\" (or Location on older phones).</string>
+    <string name="perm_open_settings">Open app settings</string>
+    <string name="bt_off_title">Bluetooth is off</string>
+    <string name="bt_off_text">Turn Bluetooth on to connect to the adapter.</string>
+    <string name="bt_turn_on">Turn on Bluetooth</string>
+
+    <!-- Device picker -->
+    <string name="connect_title">Connect adapter</string>
+    <string name="paired_devices">Paired devices</string>
+    <string name="found_devices">Nearby devices</string>
+    <string name="scan">Scan</string>
+    <string name="scanning">Scanning…</string>
+    <string name="no_paired">No paired devices. Pair the adapter in the phone Bluetooth settings, or tap Scan.</string>
+    <string name="no_found">Nothing found yet. Make sure the adapter is plugged in and the ignition is on.</string>
+    <string name="likely_obd">OBD adapter</string>
+    <string name="demo_mode">Demo mode</string>
+    <string name="demo_mode_desc">A simulated car with live data and sample fault codes. No adapter needed.</string>
+    <string name="type_classic">Bluetooth Classic</string>
+    <string name="type_ble">Bluetooth LE</string>
+    <string name="open_bt_settings">Bluetooth settings</string>
+    <string name="last_adapter">Last used</string>
+
+    <!-- Dashboard -->
+    <string name="dash_not_connected_title">Not connected</string>
+    <string name="dash_not_connected_text">Plug in your adapter, turn the ignition on and connect. Or try Demo mode.</string>
+    <string name="dash_customize">Choose gauges</string>
+    <string name="dash_no_gauges">No gauges selected. Tap \"Choose gauges\".</string>
+    <string name="dash_unsupported_hidden">%1$d gauges are hidden because your car does not support them.</string>
+    <string name="dash_tools">Tools</string>
+    <string name="driving_warning">Don\'t use the app while driving. Pull over first.</string>
+    <string name="logging_start">Record trip</string>
+    <string name="logging_stop">Stop recording</string>
+    <string name="logging_active">Recording · %1$s</string>
+    <string name="vehicle_label">Vehicle: %1$s</string>
+    <string name="waiting_data">Waiting for data…</string>
+
+    <!-- PID names -->
+    <string name="pid_engine_load">Engine load</string>
+    <string name="pid_coolant_temp">Coolant temp</string>
+    <string name="pid_stft_b1">Short fuel trim B1</string>
+    <string name="pid_ltft_b1">Long fuel trim B1</string>
+    <string name="pid_stft_b2">Short fuel trim B2</string>
+    <string name="pid_ltft_b2">Long fuel trim B2</string>
+    <string name="pid_fuel_pressure">Fuel pressure</string>
+    <string name="pid_map">Intake pressure (MAP)</string>
+    <string name="pid_rpm">Engine RPM</string>
+    <string name="pid_speed">Speed</string>
+    <string name="pid_timing_advance">Timing advance</string>
+    <string name="pid_intake_temp">Intake air temp</string>
+    <string name="pid_maf">Air flow (MAF)</string>
+    <string name="pid_throttle">Throttle</string>
+    <string name="pid_o2_b1s1">O2 sensor B1 S1</string>
+    <string name="pid_o2_b1s2">O2 sensor B1 S2</string>
+    <string name="pid_o2_b1s3">O2 sensor B1 S3</string>
+    <string name="pid_o2_b1s4">O2 sensor B1 S4</string>
+    <string name="pid_o2_b2s1">O2 sensor B2 S1</string>
+    <string name="pid_o2_b2s2">O2 sensor B2 S2</string>
+    <string name="pid_o2_b2s3">O2 sensor B2 S3</string>
+    <string name="pid_o2_b2s4">O2 sensor B2 S4</string>
+    <string name="pid_run_time">Run time</string>
+    <string name="pid_distance_mil">Distance with light on</string>
+    <string name="pid_fuel_level">Fuel level</string>
+    <string name="pid_distance_cleared">Distance since codes cleared</string>
+    <string name="pid_baro">Barometric pressure</string>
+    <string name="pid_module_voltage">Module voltage</string>
+    <string name="pid_ambient_temp">Outside temp</string>
+    <string name="pid_oil_temp">Oil temp</string>
+    <string name="pid_fuel_rate">Fuel rate</string>
+    <string name="pid_odometer">Odometer</string>
+    <string name="pid_adapter_voltage">Battery voltage</string>
+
+    <!-- Gauge config -->
+    <string name="gauges_title">Choose gauges</string>
+    <string name="gauges_hint">Turn gauges on or off and use the arrows to change the order. Saved for this vehicle.</string>
+    <string name="move_up">Move up</string>
+    <string name="move_down">Move down</string>
+    <string name="gauges_reset">Reset to default</string>
+    <string name="not_supported_by_car">Not supported by this car</string>
+
+    <!-- Codes -->
+    <string name="codes_title">Fault codes</string>
+    <string name="codes_read">Read codes</string>
+    <string name="codes_reading">Reading codes…</string>
+    <string name="codes_mil_on">Check Engine light: ON</string>
+    <string name="codes_mil_off">Check Engine light: OFF</string>
+    <plurals name="codes_found">
+        <item quantity="one">%1$d code found</item>
+        <item quantity="other">%1$d codes found</item>
+    </plurals>
+    <string name="codes_none_title">No fault codes</string>
+    <string name="codes_none_text">The car reports no stored, pending or permanent codes.</string>
+    <string name="codes_not_read_title">Ready to scan</string>
+    <string name="codes_not_read_text">Tap \"Read codes\" to check the engine computer for fault codes.</string>
+    <string name="codes_stored">Stored</string>
+    <string name="codes_pending">Pending</string>
+    <string name="codes_permanent">Permanent</string>
+    <string name="codes_stored_desc">Confirmed faults. These turn on the Check Engine light.</string>
+    <string name="codes_pending_desc">Detected once; will become stored if the fault repeats.</string>
+    <string name="codes_permanent_desc">Cannot be erased. They clear themselves after the car verifies the repair.</string>
+    <string name="codes_kind_failed">Could not read %1$s codes (%2$s)</string>
+    <string name="codes_clear">Clear codes</string>
+    <string name="codes_need_connection">Connect to the car to read fault codes.</string>
+    <string name="ecu_engine">Engine (%1$s)</string>
+    <string name="ecu_transmission">Transmission (%1$s)</string>
+    <string name="ecu_abs">ABS (%1$s)</string>
+    <string name="ecu_other">ECU %1$s</string>
+    <string name="codes_share_report">Share report</string>
+    <string name="share_as_text">Share as text</string>
+    <string name="share_as_pdf">Share as PDF</string>
+
+    <!-- Clear codes -->
+    <string name="clear_title">Clear fault codes?</string>
+    <string name="clear_text_engine">• The engine should be OFF with the ignition ON (some cars need the engine idling).</string>
+    <string name="clear_text_not_fix">• Clearing does NOT fix the problem. If the fault is still there, the code and the light will come back — sometimes after a few minutes, sometimes after a few drives.</string>
+    <string name="clear_text_monitors">• Clearing also resets the readiness monitors and freeze frame data. The car may fail an emissions / annual inspection until it has been driven enough for the monitors to be ready again.</string>
+    <string name="clear_text_saved">The current codes will be saved to History first.</string>
+    <string name="clear_continue">Continue</string>
+    <string name="clear_confirm_title">Final confirmation</string>
+    <string name="clear_confirm_text">Send the clear command (Mode 04) to the car now?</string>
+    <string name="clear_confirm_button">I understand, clear codes</string>
+    <string name="clear_in_progress">Clearing codes…</string>
+    <string name="clear_success">Codes cleared, the Check Engine light is off.</string>
+    <string name="clear_came_back">Some codes came back immediately: the fault is still active.</string>
+    <string name="clear_failed">The car did not accept the clear command (%1$s). Make sure the ignition is ON and the engine is off, then try again.</string>
+    <string name="clear_permanent_remain">Permanent codes stay until the car confirms the repair. This is normal.</string>
+    <string name="clear_not_connected">Not connected</string>
+
+    <!-- Code detail -->
+    <string name="detail_description">Description</string>
+    <string name="detail_causes">Likely causes</string>
+    <string name="detail_tip">What to check</string>
+    <string name="detail_severity">Severity</string>
+    <string name="sev_low">Low</string>
+    <string name="sev_medium">Medium</string>
+    <string name="sev_high">High</string>
+    <string name="sev_stop">Stop driving</string>
+    <string name="sev_low_desc">Minor or emissions-only. Fix when convenient.</string>
+    <string name="sev_medium_desc">Schedule a repair soon.</string>
+    <string name="sev_high_desc">Fix as soon as possible to avoid damage.</string>
+    <string name="sev_stop_desc">Stop driving when safe and have the car checked. Driving on may cause engine damage or be unsafe.</string>
+    <string name="detail_manufacturer">Manufacturer-specific code</string>
+    <string name="detail_manufacturer_text">This code is defined by your car\'s manufacturer, so its exact meaning differs between brands. Search the web with your car model, or ask a dealer.</string>
+    <string name="detail_unknown_generic">This generic code is not in the offline database. Its group:</string>
+    <string name="detail_reported_by">Reported by: %1$s</string>
+    <string name="detail_kind">Type: %1$s</string>
+    <string name="detail_no_details">No extra details for this code. Search the web for more information.</string>
+
+    <!-- Freeze frame -->
+    <string name="ff_title">Freeze frame</string>
+    <string name="ff_desc">A snapshot of engine data recorded at the moment a fault was detected.</string>
+    <string name="ff_caused_by">Recorded for code %1$s</string>
+    <string name="ff_none">No freeze frame stored. It is erased when codes are cleared.</string>
+    <string name="ff_read">Read freeze frame</string>
+
+    <!-- Readiness -->
+    <string name="rd_title">Readiness monitors</string>
+    <string name="rd_desc">Self-tests the car runs while driving. Inspection stations check them.</string>
+    <string name="rd_ready">Ready</string>
+    <string name="rd_not_ready">Not ready</string>
+    <string name="rd_not_supported">Not supported</string>
+    <string name="rd_summary_ready">Ready for inspection</string>
+    <plurals name="rd_summary_not_ready">
+        <item quantity="one">Not ready yet: %1$d monitor incomplete. Drive more.</item>
+        <item quantity="other">Not ready yet: %1$d monitors incomplete. Drive more.</item>
+    </plurals>
+    <string name="rd_drive_tip">A mix of city and highway driving over a few days usually completes the monitors. The EVAP monitor often needs a cold start and a tank between 1/4 and 3/4.</string>
+    <string name="rd_since_clear">Since codes cleared</string>
+    <string name="rd_this_cycle">This drive cycle</string>
+    <string name="rd_read">Read monitors</string>
+    <string name="rd_diesel">Diesel engine</string>
+    <string name="rd_mil_on_warning">The Check Engine light is on: the car will usually fail inspection until the fault is fixed.</string>
+    <string name="mon_misfire">Misfire</string>
+    <string name="mon_fuel_system">Fuel system</string>
+    <string name="mon_components">Comprehensive components</string>
+    <string name="mon_catalyst">Catalyst</string>
+    <string name="mon_heated_catalyst">Heated catalyst</string>
+    <string name="mon_evap">EVAP system</string>
+    <string name="mon_secondary_air">Secondary air</string>
+    <string name="mon_ac_refrigerant">A/C refrigerant</string>
+    <string name="mon_o2_sensor">O2 sensor</string>
+    <string name="mon_o2_heater">O2 sensor heater</string>
+    <string name="mon_egr">EGR system</string>
+    <string name="mon_nmhc_catalyst">NMHC catalyst</string>
+    <string name="mon_nox_scr">NOx / SCR</string>
+    <string name="mon_boost_pressure">Boost pressure</string>
+    <string name="mon_exhaust_sensor">Exhaust gas sensor</string>
+    <string name="mon_pm_filter">Particulate filter (DPF)</string>
+    <string name="mon_egr_vvt">EGR / VVT</string>
+
+    <!-- Vehicle info -->
+    <string name="vi_title">Vehicle info</string>
+    <string name="vi_read">Read vehicle info</string>
+    <string name="vi_vin">VIN</string>
+    <string name="vi_manufacturer">Manufacturer</string>
+    <string name="vi_model_year">Model year</string>
+    <string name="vi_country">Country / region</string>
+    <string name="vi_check_digit">VIN check digit</string>
+    <string name="vi_check_ok">Valid</string>
+    <string name="vi_check_bad">Does not match (normal for many non-US cars)</string>
+    <string name="vi_cal_ids">Calibration IDs</string>
+    <string name="vi_cvn">Calibration verification (CVN)</string>
+    <string name="vi_ecu_name">ECU name</string>
+    <string name="vi_no_vin">The car did not report a VIN (common on cars before ~2005).</string>
+    <string name="vi_saved_vehicles">Saved vehicles</string>
+    <string name="vi_active">Active</string>
+    <string name="vi_rename">Rename</string>
+    <string name="vi_name">Name</string>
+    <string name="vi_no_vehicles">No saved vehicles yet. Vehicles are saved automatically when you connect.</string>
+    <string name="country_us">United States</string>
+    <string name="country_ca">Canada</string>
+    <string name="country_mx">Mexico</string>
+    <string name="country_na">North America</string>
+    <string name="country_au">Australia</string>
+    <string name="country_nz">New Zealand</string>
+    <string name="country_sa">South America</string>
+    <string name="country_br">Brazil</string>
+    <string name="country_jp">Japan</string>
+    <string name="country_kr">South Korea</string>
+    <string name="country_cn">China</string>
+    <string name="country_in">India</string>
+    <string name="country_th">Thailand</string>
+    <string name="country_tr">Turkey</string>
+    <string name="country_asia">Asia</string>
+    <string name="country_uk">United Kingdom</string>
+    <string name="country_de">Germany</string>
+    <string name="country_cz">Czech Republic</string>
+    <string name="country_ch">Switzerland</string>
+    <string name="country_ro">Romania</string>
+    <string name="country_fr">France</string>
+    <string name="country_es">Spain</string>
+    <string name="country_ru">Russia</string>
+    <string name="country_se">Sweden</string>
+    <string name="country_be">Belgium</string>
+    <string name="country_it">Italy</string>
+    <string name="country_za">South Africa</string>
+    <string name="country_eu">Europe</string>
+    <string name="country_unknown">Unknown</string>
+
+    <!-- Live graph -->
+    <string name="graph_select">Choose up to 4 values</string>
+    <string name="graph_pause">Pause</string>
+    <string name="graph_resume">Resume</string>
+    <string name="graph_zoom_in">Zoom in</string>
+    <string name="graph_zoom_out">Zoom out</string>
+    <string name="graph_window">Last %1$d s</string>
+    <string name="graph_no_selection">Pick at least one value to graph.</string>
+    <string name="graph_need_connection">Connect to the car to see live graphs. Recorded trips can be replayed from History.</string>
+
+    <!-- History -->
+    <string name="hist_scans">Code scans</string>
+    <string name="hist_sessions">Trips</string>
+    <string name="hist_empty_scans">No scans yet. Every time you read codes, the result is saved here so you can compare over time.</string>
+    <string name="hist_empty_sessions">No recorded trips. Tap \"Record trip\" on the dashboard to log data.</string>
+    <string name="hist_before_clear">Saved before clearing</string>
+    <string name="hist_mileage">Odometer: %1$s</string>
+    <string name="hist_no_codes">No codes</string>
+    <string name="scan_title">Scan details</string>
+    <string name="session_title">Trip</string>
+    <string name="session_duration">Duration</string>
+    <string name="session_distance">Distance</string>
+    <string name="session_max_speed">Max speed</string>
+    <string name="session_avg_rpm">Average RPM</string>
+    <string name="session_max_coolant">Max coolant temp</string>
+    <string name="session_in_progress">Recording in progress</string>
+    <string name="delete_confirm">Delete this item?</string>
+    <string name="session_no_samples">This trip has no recorded samples.</string>
+
+    <!-- Tools -->
+    <string name="tools_title">Tools</string>
+    <string name="tool_readiness_desc">Is the car ready for the annual inspection?</string>
+    <string name="tool_freeze_desc">Data snapshot from when the fault happened</string>
+    <string name="tool_vehicle_desc">VIN, model year, ECU details and saved vehicles</string>
+    <string name="tool_mode06">Test results (Mode 06)</string>
+    <string name="tool_mode06_desc">Raw results of the car\'s self-tests</string>
+    <string name="tool_fuel">Fuel consumption</string>
+    <string name="tool_fuel_desc">Estimated from air flow and speed</string>
+    <string name="tool_accel">0-100 km/h timer</string>
+    <string name="tool_accel_mph">0-60 mph timer</string>
+    <string name="tool_accel_desc">Measure acceleration using live speed</string>
+    <string name="tool_console">Developer console</string>
+    <string name="tool_console_desc">Raw adapter commands and responses</string>
+
+    <string name="m06_not_supported">Mode 06 results are only available on CAN cars (most cars from 2008).</string>
+    <string name="m06_none">The car did not report any test results.</string>
+    <string name="m06_read">Read test results</string>
+    <string name="m06_pass">Pass</string>
+    <string name="m06_fail">Fail</string>
+    <string name="m06_test">Monitor %1$s · test %2$s</string>
+    <string name="m06_limits">Limits: %1$s – %2$s</string>
+
+    <string name="fuel_estimate_note">Estimate only. Calculated from air flow (MAF) and speed for a gasoline engine. Real consumption can differ, especially for diesel and turbo engines.</string>
+    <string name="fuel_instant">Instant</string>
+    <string name="fuel_average">Trip average</string>
+    <string name="fuel_rate_label">Fuel flow</string>
+    <string name="fuel_stopped">Stopped</string>
+    <string name="fuel_need_maf">This car does not report air flow (MAF), so consumption cannot be estimated.</string>
+    <string name="fuel_reset">Reset average</string>
+
+    <string name="accel_text">Stop the car completely, tap Arm, then accelerate. Timing starts when the car moves and stops at the target speed. Only on a closed road or track, and obey the law.</string>
+    <string name="accel_arm">Arm</string>
+    <string name="accel_armed">Armed — waiting for the car to move</string>
+    <string name="accel_need_stop">Stop the car to arm the timer.</string>
+    <string name="accel_running">Timing…</string>
+    <string name="accel_result">Result</string>
+    <string name="accel_best">Best: %1$s</string>
+    <string name="accel_reset">Reset</string>
+    <string name="accel_note">Accuracy is limited by how fast the car reports speed (about 0.1–0.3 s).</string>
+
+    <string name="console_clear">Clear</string>
+    <string name="console_empty">No traffic yet.</string>
+
+    <!-- Settings -->
+    <string name="set_language">Language</string>
+    <string name="lang_system">System</string>
+    <string name="lang_hebrew">עברית</string>
+    <string name="lang_english">English</string>
+    <string name="set_units">Units</string>
+    <string name="set_speed_unit">Speed and distance</string>
+    <string name="set_temp_unit">Temperature</string>
+    <string name="set_pressure_unit">Pressure</string>
+    <string name="set_economy_unit">Fuel economy</string>
+    <string name="set_polling">Polling speed</string>
+    <string name="polling_fast">Fast</string>
+    <string name="polling_normal">Normal</string>
+    <string name="polling_slow">Slow</string>
+    <string name="polling_hint">If readings freeze or drop out (common with clone adapters), choose Slow.</string>
+    <string name="set_connection">Connection</string>
+    <string name="set_auto_connect">Auto-connect on launch</string>
+    <string name="set_auto_connect_desc">Connect to the last used adapter when the app opens.</string>
+    <string name="set_keep_screen">Keep screen on while connected</string>
+    <string name="set_forget_adapter">Forget last adapter</string>
+    <string name="set_appearance">Appearance</string>
+    <string name="set_theme">Theme</string>
+    <string name="theme_dark">Dark</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_system">Follow system</string>
+    <string name="set_advanced">Advanced</string>
+    <string name="set_dev_console">Developer console</string>
+    <string name="set_dev_console_desc">Show raw adapter traffic in Tools.</string>
+    <string name="set_about">About</string>
+    <string name="set_vehicles">Saved vehicles</string>
+    <string name="set_onboarding">Show the setup guide again</string>
+
+    <string name="about_version">Version %1$s</string>
+    <string name="about_text">Free OBD2 diagnostics. No subscription, no ads, no accounts, no internet connection. All data stays on your phone.</string>
+    <string name="about_limits_title">What generic OBD2 can do</string>
+    <string name="about_safety">The app only reads data. The only command that changes anything in the car is \"Clear codes\" (Mode 04), which always asks you twice. It never writes to, codes or tunes the car computers.</string>
+
+    <!-- Report -->
+    <string name="report_title">Diagnose Pro – fault code report</string>
+    <string name="report_vehicle">Vehicle</string>
+    <string name="report_date">Date</string>
+    <string name="report_codes">Codes</string>
+    <string name="report_generated">Generated by Diagnose Pro (generic OBD2). Codes describe what the car computer detected; confirm the cause before replacing parts.</string>
+
+    <string name="notif_channel">Adapter connection</string>
+    <string name="notif_connected">Connected to %1$s</string>
+</resources>

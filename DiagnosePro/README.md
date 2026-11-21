@@ -1,0 +1,91 @@
+# Diagnose Pro (דיאגנוז פרו)
+
+Free OBD2 car diagnostics for Android. No subscription, ads, accounts or internet permission.
+It connects to an ELM327 Bluetooth adapter (Classic or BLE), reads live engine data and fault codes, and
+can clear codes to turn off the Check Engine light. Full Hebrew and English support (RTL/LTR).
+
+> Hebrew instructions: [README.he.md](README.he.md)
+
+| Dashboard | Codes | Code detail (HE) | Clear dialog (HE) |
+|---|---|---|---|
+| ![](docs/screenshots/en_04_dashboard_live.png) | ![](docs/screenshots/en_05_codes.png) | ![](docs/screenshots/he_05_codes.png) | ![](docs/screenshots/he_06_clear_dialog.png) |
+
+## Install the APK on your phone
+
+1. Copy `release/DiagnosePro-debug.apk` to the phone, or download it on the phone itself.
+2. Open it. Android asks you to allow **Install unknown apps** for the app you opened it with
+   (Files, Chrome, etc.). Allow it, go back and tap **Install**.
+3. Play Protect may warn about an unknown developer: tap **More details → Install anyway**.
+   (The APK is signed with a debug key.)
+4. Needs Android 8.0 (API 26) or newer.
+
+## Pair the adapter
+
+1. Plug the ELM327 into the OBD2 port under the steering wheel and turn the ignition **ON** (or start the engine).
+2. **Bluetooth Classic adapters** (most cheap ones): phone Settings → Bluetooth → pair the device
+   (named OBDII / ELM327 / V-LINK…). The PIN is usually `1234` or `0000`.
+3. **BLE adapters** (Vgate iCar Pro BLE, Veepeak BLE, OBDLink CX…): no pairing. Use **Scan** in the app.
+4. In the app, tap the connection status at the top-right (top-left in Hebrew), allow the
+   Bluetooth permission, and pick your adapter. OBD-looking devices are highlighted.
+
+No adapter? Choose **Demo mode** to try every screen with a simulated car.
+
+## Features
+
+| Feature | Where |
+|---|---|
+| Live gauges (RPM, speed, temps, load, MAF, MAP, fuel trims, O2, timing, voltage, run time…), only PIDs your car supports, warning colors, per-vehicle selection/order | Dashboard → *Choose gauges* |
+| Read stored / pending / permanent codes, MIL status, which ECU reported each code | Codes → *Read codes* |
+| Code details in Hebrew/English: description, likely causes, severity, what to check; web search for manufacturer codes | tap a code |
+| **Clear codes (Mode 04)** with two confirmations; codes saved to history first; re-check after clearing | Codes → *Clear codes* |
+| Share a report as text or PDF | Codes → share icon |
+| Freeze frame, readiness monitors ("Ready for inspection"), vehicle info + offline VIN decoding, Mode 06, fuel consumption estimate, 0-100 km/h timer | Dashboard → wrench icon (Tools) |
+| Live graph of 1-4 values: pause, zoom, CSV export | Live graph |
+| Trip recording with summary, replay and CSV export; scan history with comparison against the previous scan | Dashboard → *Record trip*, History |
+| Language (Hebrew / English / system), units, polling speed, auto-connect, keep screen on, theme, developer console | Settings |
+
+The raw ELM327 log (copy/share) is in Tools once **Settings → Developer console** is on.
+
+**Limits:** generic OBD2 reads the engine/emissions systems only. ABS, airbags and transmission usually need
+brand-specific tools. The app is read-only except Mode 04. It never writes, codes or tunes ECUs.
+Don't use the app while driving.
+
+## Build from source
+
+Requirements: JDK 17+ and the Android SDK (platform 34, build-tools 34).
+
+```bat
+:: Windows
+set ANDROID_HOME=%LOCALAPPDATA%\Android\Sdk
+gradlew.bat assembleDebug
+gradlew.bat testDebugUnitTest
+```
+```sh
+# Linux / macOS
+echo "sdk.dir=$ANDROID_HOME" > local.properties
+./gradlew assembleDebug testDebugUnitTest
+```
+Output: `app/build/outputs/apk/debug/app-debug.apk`. Install with `adb install -r app/build/outputs/apk/debug/app-debug.apk`.
+
+## Project layout
+
+```
+app/src/main/java/com/diagnosepro/app/
+  transport/  ObdTransport + Classic SPP, BLE (auto-detects GATT chars), Demo simulator, BT helper
+  elm327/     response parser, ISO-TP/multi-ECU frame assembly, command queue, init, clone detection
+  obd/        data-driven PID table, decoders (DTC, monitors, Mode 02/06/09), VIN decoder, ObdService
+  data/       Room (vehicles, scans, trips, samples), DataStore settings, offline DTC DB, raw log
+  domain/     ObdManager (connect, auto-reconnect, smart polling, logging), clear-codes flow, units
+  service/    foreground service (keeps the link alive with the screen off)
+  i18n/       per-app language, bidi isolation for codes/numbers
+  ui/         Compose screens, components (gauges, charts), navigation
+app/src/main/assets/dtc_db.json   2,064 generic codes, EN+HE (generator: tools/dtc/generate_dtc_db.py)
+```
+
+## Tests
+
+`gradlew testDebugUnitTest` runs 70+ JVM tests: PID formulas, DTC decoding (CAN single/multi-frame,
+headers on/off, 11/29-bit, J1850/ISO 9141 multi-ECU), ELM327 parser against recorded responses, VIN decoder,
+clear-codes flow (success / codes come back / NO DATA / negative response), units, DTC database, string
+parity EN/HE (fails if a Hebrew string is missing), and a **full UI run of the real app in demo mode in both
+English and Hebrew** (Robolectric), which saves screenshots to `app/build/screenshots/`.
