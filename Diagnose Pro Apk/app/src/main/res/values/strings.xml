@@ -82,7 +82,7 @@
 
     <!-- Permissions / Bluetooth -->
     <string name="perm_title">Bluetooth access</string>
-    <string name="perm_text">Diagnose Pro uses Bluetooth only to talk to your OBD adapter. It does not use your location and does not send any data to the internet.</string>
+    <string name="perm_text">Diagnose Pro uses Bluetooth only to talk to your OBD adapter. It does not use your location and never sends any data to the internet.</string>
     <string name="perm_text_legacy">On this Android version, scanning for Bluetooth devices requires the Location permission. The app does not use or store your location.</string>
     <string name="perm_grant">Allow</string>
     <string name="perm_denied_forever">The permission was denied. Open the app settings and allow \"Nearby devices\" (or Location on older phones).</string>
@@ -417,7 +417,7 @@
     <string name="set_onboarding">Show the setup guide again</string>
 
     <string name="about_version">Version %1$s</string>
-    <string name="about_text">Free OBD2 diagnostics. No subscription, no ads, no accounts, no internet connection. All data stays on your phone.</string>
+    <string name="about_text">Free OBD2 diagnostics. No subscription, no ads, no accounts. The app never contacts the internet: network access is used only to reach Wi-Fi adapters in the car. All data stays on your phone.</string>
     <string name="about_limits_title">What generic OBD2 can do</string>
     <string name="about_safety">The app only reads data. The only command that changes anything in the car is \"Clear codes\" (Mode 04), which always asks you twice. It never writes to, codes or tunes the car computers.</string>
 
@@ -580,4 +580,14 @@
     <string name="st_supported">Supported sensors</string>
     <string name="st_live">Live data</string>
     <string name="st_speed">RPM and speed</string>
+
+    <string name="wifi_title">Wi-Fi adapter</string>
+    <string name="wifi_text">First connect the phone to the adapter\'s Wi-Fi network (a name like WiFi_OBDII or V-LINK) in the phone settings, then tap Connect. The default address fits almost every adapter.</string>
+    <string name="wifi_address">Address and port</string>
+    <string name="wifi_open_settings">Wi-Fi settings</string>
+    <string name="manual_title">Adapter not in the list?</string>
+    <string name="manual_text">Enter the adapter\'s Bluetooth address (printed on the adapter or its box, or shown in the phone Bluetooth settings).</string>
+    <string name="manual_address">Bluetooth address</string>
+    <string name="try_ble">Try as Bluetooth LE</string>
+    <string name="try_classic">Try as Bluetooth Classic</string>
 </resources>

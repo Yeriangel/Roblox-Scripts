@@ -35,6 +35,7 @@ import com.diagnosepro.app.transport.OpenFailure
 import com.diagnosepro.app.transport.TransportClosedException
 import com.diagnosepro.app.transport.TransportOpenException
 import com.diagnosepro.app.transport.TransportType
+import com.diagnosepro.app.transport.WifiTransport
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
@@ -187,6 +188,8 @@ class ObdManager @Inject constructor(
         TransportType.DEMO -> DemoTransport()
         TransportType.CLASSIC -> ClassicSppTransport(bluetooth.adapter, t.address)
         TransportType.BLE -> BleTransport(context, bluetooth.adapter, t.address)
+        TransportType.WIFI -> WifiTransport.parseAddress(t.address)?.let { (h, p) -> WifiTransport(h, p, context) }
+            ?: throw TransportOpenException(OpenFailure.DEVICE_NOT_FOUND, "bad Wi-Fi address")
     }
 
     private suspend fun connectLoop(target: Target) {
@@ -194,7 +197,7 @@ class ObdManager @Inject constructor(
         var everConnected = false
         while (scope.isActive && !userDisconnect) {
             try {
-                if (target.type != TransportType.DEMO) {
+                if (target.type == TransportType.CLASSIC || target.type == TransportType.BLE) {
                     if (!bluetooth.hasPermissions()) throw TransportOpenException(OpenFailure.PERMISSION, "permission")
                     if (!bluetooth.isEnabled) throw TransportOpenException(OpenFailure.BLUETOOTH_OFF, "bt off")
                 }

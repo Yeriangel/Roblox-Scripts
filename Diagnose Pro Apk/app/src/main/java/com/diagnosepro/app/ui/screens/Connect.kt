@@ -55,6 +55,7 @@ import com.diagnosepro.app.domain.Target
 import com.diagnosepro.app.transport.BluetoothHelper
 import com.diagnosepro.app.transport.BtDevice
 import com.diagnosepro.app.transport.TransportType
+import com.diagnosepro.app.transport.WifiTransport
 import com.diagnosepro.app.ui.MainViewModel
 import com.diagnosepro.app.ui.components.BackTopBar
 import com.diagnosepro.app.ui.components.Banner
@@ -85,6 +86,7 @@ fun ConnectScreen(vm: MainViewModel, onBack: () -> Unit) {
     val permLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { refresh++; deniedOnce = true }
     val enableLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { refresh++ }
 
+    var manual by remember { mutableStateOf(false) }
     DisposableEffect(Unit) { onDispose { vm.bluetooth.stopScan() } }
 
     val connect: (Target) -> Unit = { t -> vm.bluetooth.stopScan(); vm.connect(t) }
@@ -143,7 +145,7 @@ fun ConnectScreen(vm: MainViewModel, onBack: () -> Unit) {
                 }
                 if (paired.isEmpty()) item { Text(stringResource(R.string.no_paired), color = MaterialTheme.colorScheme.onSurfaceVariant) }
                 items(paired, key = { "p" + it.address }) { d ->
-                    DeviceRow(d, isLast = settings?.lastAdapter?.address == d.address, enabled = !state.isBusy) { connect(Target(d.address, d.name, d.type)) }
+                    DeviceRow(d, isLast = settings?.lastAdapter?.address == d.address, enabled = !state.isBusy, onOther = { connect(Target(d.address, d.name, other(d.type))) }) { connect(Target(d.address, d.name, d.type)) }
                 }
                 item {
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -162,8 +164,31 @@ fun ConnectScreen(vm: MainViewModel, onBack: () -> Unit) {
                 val found = scanResults.filterNot { r -> paired.any { it.address == r.address } }
                 if (found.isEmpty() && scanning) item { Text(stringResource(R.string.no_found), color = MaterialTheme.colorScheme.onSurfaceVariant) }
                 items(found, key = { "f" + it.address }) { d ->
-                    DeviceRow(d, isLast = false, enabled = !state.isBusy) { connect(Target(d.address, d.name, d.type)) }
+                    DeviceRow(d, isLast = false, enabled = !state.isBusy, onOther = { connect(Target(d.address, d.name, other(d.type))) }) { connect(Target(d.address, d.name, d.type)) }
                 }
+            }
+
+            // ---- Wi-Fi adapters ----
+            item { SectionTitle(stringResource(R.string.wifi_title)) }
+            item {
+                InfoCard {
+                    Text(stringResource(R.string.wifi_text), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Spacer(Modifier.height(8.dp))
+                    val lastWifi = settings?.lastAdapter?.takeIf { it.type == TransportType.WIFI }?.address
+                    var addr by remember(lastWifi) { mutableStateOf(lastWifi ?: "${WifiTransport.DEFAULT_HOST}:${WifiTransport.DEFAULT_PORT}") }
+                    val valid = WifiTransport.parseAddress(addr) != null
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        androidx.compose.material3.OutlinedTextField(addr, { addr = it }, Modifier.weight(1f), singleLine = true, isError = !valid,
+                            label = { Text(stringResource(R.string.wifi_address)) })
+                        Spacer(Modifier.width(8.dp))
+                        Button(enabled = valid && !state.isBusy, onClick = { connect(Target(addr.trim(), "Wi-Fi ELM327", TransportType.WIFI)) }) { Text(stringResource(R.string.connect)) }
+                    }
+                    TextButton(onClick = { runCatching { ctx.startActivity(Intent(Settings.ACTION_WIFI_SETTINGS)) } }) { Text(stringResource(R.string.wifi_open_settings)) }
+                }
+            }
+            // ---- Adapter not in the list: connect by address ----
+            if (vm.bluetooth.isSupported && hasPerm && btOn) item {
+                TextButton(onClick = { manual = true }) { Text(stringResource(R.string.manual_title)) }
             }
 
             item { SectionTitle(stringResource(R.string.demo_mode)) }
@@ -182,6 +207,39 @@ fun ConnectScreen(vm: MainViewModel, onBack: () -> Unit) {
             item { Spacer(Modifier.height(8.dp)); Banner(stringResource(R.string.limits_note), color = MaterialTheme.colorScheme.secondary); Spacer(Modifier.height(24.dp)) }
         }
     }
+    if (manual) ManualDialog(vm, { manual = false }) { manual = false; connect(it) }
+}
+
+private fun other(t: TransportType) = if (t == TransportType.BLE) TransportType.CLASSIC else TransportType.BLE
+
+/** Connect to an adapter the scan did not find, by its Bluetooth address. */
+@Composable
+private fun ManualDialog(vm: MainViewModel, onDismiss: () -> Unit, onConnect: (Target) -> Unit) {
+    var addr by remember { mutableStateOf("") }
+    var ble by remember { mutableStateOf(false) }
+    val valid = vm.bluetooth.isValidAddress(addr)
+    androidx.compose.material3.AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.manual_title)) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(stringResource(R.string.manual_text), style = MaterialTheme.typography.bodyMedium)
+                androidx.compose.material3.OutlinedTextField(addr, { addr = it }, singleLine = true, isError = addr.isNotEmpty() && !valid,
+                    label = { Text(stringResource(R.string.manual_address)) }, placeholder = { Text("AA:BB:CC:DD:EE:FF") })
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    androidx.compose.material3.FilterChip(!ble, { ble = false }, { Text(stringResource(R.string.type_classic)) })
+                    androidx.compose.material3.FilterChip(ble, { ble = true }, { Text(stringResource(R.string.type_ble)) })
+                }
+            }
+        },
+        confirmButton = {
+            Button(enabled = valid, onClick = {
+                val a = addr.trim().uppercase()
+                onConnect(Target(a, a, if (ble) TransportType.BLE else TransportType.CLASSIC))
+            }) { Text(stringResource(R.string.connect)) }
+        },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) } },
+    )
 }
 
 @Composable
@@ -221,7 +279,7 @@ private fun ConnectionStatusCard(state: ConnectionState, onDisconnect: () -> Uni
 }
 
 @Composable
-private fun DeviceRow(d: BtDevice, isLast: Boolean, enabled: Boolean, onClick: () -> Unit) {
+private fun DeviceRow(d: BtDevice, isLast: Boolean, enabled: Boolean, onOther: () -> Unit, onClick: () -> Unit) {
     InfoCard(onClick = { if (enabled) onClick() }) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(Icons.Filled.Bluetooth, null, tint = if (d.looksLikeObd) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant)
@@ -230,6 +288,10 @@ private fun DeviceRow(d: BtDevice, isLast: Boolean, enabled: Boolean, onClick: (
                 LtrText(d.name, style = MaterialTheme.typography.titleMedium, maxLines = 1)
                 LtrText(d.address, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Text(stringResource(if (d.type == TransportType.BLE) R.string.type_ble else R.string.type_classic), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                // Dual-mode adapters are sometimes detected as the wrong kind; let the user try the other one.
+                TextButton(onClick = { if (enabled) onOther() }, contentPadding = androidx.compose.foundation.layout.PaddingValues(0.dp)) {
+                    Text(stringResource(if (d.type == TransportType.BLE) R.string.try_classic else R.string.try_ble), style = MaterialTheme.typography.labelMedium)
+                }
             }
             if (d.looksLikeObd) AssistChip(onClick = onClick, label = { Text(stringResource(R.string.likely_obd)) }, leadingIcon = { Icon(Icons.Filled.Star, null, Modifier.size(16.dp)) })
             if (isLast) { Spacer(Modifier.width(4.dp)); AssistChip(onClick = onClick, label = { Text(stringResource(R.string.last_adapter)) }) }

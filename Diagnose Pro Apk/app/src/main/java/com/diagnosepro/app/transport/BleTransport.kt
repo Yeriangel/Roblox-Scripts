@@ -222,6 +222,16 @@ class BleTransport(
             Layout(u16("fff0"), u16("fff2"), u16("fff1")),   // most BLE ELM327 clones, OBDLink CX
             Layout(u16("ffe0"), u16("ffe1"), u16("ffe1")),   // HM-10 style UART
             Layout(u16("18f0"), u16("2af1"), u16("2af0")),   // Vgate iCar / Veepeak
+            Layout(                                             // Nordic UART (many nRF-based adapters)
+                UUID.fromString("6e400001-b5a3-f393-e0a9-e50e24dcca9e"),
+                UUID.fromString("6e400002-b5a3-f393-e0a9-e50e24dcca9e"),
+                UUID.fromString("6e400003-b5a3-f393-e0a9-e50e24dcca9e"),
+            ),
+            Layout(                                             // Microchip/ISSC transparent UART
+                UUID.fromString("49535343-fe7d-4ae5-8fa9-9fafd205e455"),
+                UUID.fromString("49535343-8841-43f4-a8d4-ecbe34729bb3"),
+                UUID.fromString("49535343-1e4d-4bd9-ba61-23c647249616"),
+            ),
             Layout(                                             // Vgate iCar Pro BLE4.0
                 UUID.fromString("e7810a71-73ae-499d-8c15-faa9aef0c3f2"),
                 UUID.fromString("bef8d6c9-9c21-4c9e-b632-bd58c1009f9f"),

@@ -1,7 +1,8 @@
 # Diagnose Pro (דיאגנוז פרו)
 
-Free OBD2 car diagnostics for Android. No subscription, ads, accounts or internet permission.
-It connects to an ELM327 Bluetooth adapter (Classic or BLE), reads live engine data and fault codes, and
+Free OBD2 car diagnostics for Android. No subscription, ads or accounts. The app never contacts the internet;
+network permission is used only to reach Wi-Fi adapters on their own local network.
+It connects to an ELM327-compatible adapter (Bluetooth Classic, Bluetooth LE or Wi-Fi), reads live engine data and fault codes, and
 can clear codes to turn off the Check Engine light. Full Hebrew and English support (RTL/LTR).
 
 > Hebrew instructions: [README.he.md](README.he.md)
@@ -34,6 +35,29 @@ install over an app signed with a different key).
 3. **BLE adapters** (Vgate iCar Pro BLE, Veepeak BLE, OBDLink CX…): no pairing. Use **Scan** in the app.
 4. In the app, tap the connection status at the top-right (top-left in Hebrew), allow the
    Bluetooth permission, and pick your adapter. OBD-looking devices are highlighted.
+
+5. **Wi-Fi adapters:** connect the phone to the adapter's Wi-Fi network first, then use the **Wi-Fi adapter**
+   card (default `192.168.0.10:35000`).
+6. **Adapter not found by the scan?** Use **Adapter not in the list?** to enter its Bluetooth address, or
+   **Try as Bluetooth LE / Classic** on a device that was detected as the wrong kind.
+
+### Adapter compatibility
+
+Any adapter that speaks the open **ELM327 AT command set** should work. None of these has been tested on real
+hardware yet; this is what the code supports.
+
+| Adapter family | Connection | Notes |
+|---|---|---|
+| Generic ELM327 (v1.5 / v2.1 clones) | Bluetooth Classic, Wi-Fi | Most common. Basics usually work; use Polling speed → Slow if unstable |
+| Vgate iCar Pro / iCar 2 / iCar Pro 2S | Classic, BLE, Wi-Fi | BLE services `18F0` and the Vgate 128-bit service are recognised |
+| Vgate vLinker MC / MC+ / FD / FD+ / FS / MS | Classic, BLE | BLE service `18F0` |
+| OBDLink MX+ / LX / CX (STN chips) | Classic, BLE | ELM327-compatible; BLE service `FFF0` |
+| Veepeak OBDCheck BLE / BLE+ / VP01 (Wi-Fi) | BLE, Wi-Fi | `FFF0` |
+| LELink, Carista, Viecar, Konnwei KW902, Panlong, BAFX | BLE / Classic | `FFE0`, `FFF0`, Nordic UART or Microchip UART; unknown layouts are auto-detected |
+
+**Not supported:** adapters with a closed, proprietary protocol such as Launch EasyDiag / X431 / ThinkDiag,
+Carly, OBDeleven, BlueDriver and FIXD. They do not accept ELM327 commands and only work with their own apps.
+USB adapters are not supported either.
 
 No adapter? Choose **Demo mode** to try every screen with a simulated car.
 

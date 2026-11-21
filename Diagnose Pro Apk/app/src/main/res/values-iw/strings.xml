@@ -421,7 +421,7 @@
     <string name="set_onboarding">הצגת מדריך ההתחלה שוב</string>
 
     <string name="about_version">גרסה %1$s</string>
-    <string name="about_text">אבחון OBD2 בחינם. בלי מנוי, בלי פרסומות, בלי חשבון ובלי חיבור לאינטרנט. כל הנתונים נשארים בטלפון שלכם.</string>
+    <string name="about_text">אבחון OBD2 בחינם. בלי מנוי, בלי פרסומות ובלי חשבון. האפליקציה אף פעם לא פונה לאינטרנט: הגישה לרשת משמשת רק לחיבור למתאמי Wi-Fi ברכב. כל הנתונים נשארים בטלפון שלכם.</string>
     <string name="about_limits_title">מה OBD2 גנרי יכול לעשות</string>
     <string name="about_safety">האפליקציה רק קוראת נתונים. הפקודה היחידה שמשנה משהו ברכב היא \"מחיקת קודים\" (Mode 04), והיא תמיד מבקשת אישור כפול. האפליקציה אף פעם לא כותבת, מקודדת או משנה את מחשבי הרכב.</string>
 
@@ -584,4 +584,14 @@
     <string name="st_supported">חיישנים נתמכים</string>
     <string name="st_live">נתונים חיים</string>
     <string name="st_speed">סל״ד ומהירות</string>
+
+    <string name="wifi_title">מתאם Wi-Fi</string>
+    <string name="wifi_text">קודם חברו את הטלפון לרשת ה-Wi-Fi של המתאם (שם כמו WiFi_OBDII או V-LINK) בהגדרות הטלפון, ואז הקישו על התחברות. כתובת ברירת המחדל מתאימה כמעט לכל מתאם.</string>
+    <string name="wifi_address">כתובת ופורט</string>
+    <string name="wifi_open_settings">הגדרות Wi-Fi</string>
+    <string name="manual_title">המתאם לא מופיע ברשימה?</string>
+    <string name="manual_text">הזינו את כתובת הבלוטות׳ של המתאם (מודפסת על המתאם או על האריזה, או מופיעה בהגדרות הבלוטות׳ של הטלפון).</string>
+    <string name="manual_address">כתובת בלוטות׳</string>
+    <string name="try_ble">לנסות כ-Bluetooth LE</string>
+    <string name="try_classic">לנסות כבלוטות׳ קלאסי</string>
 </resources>

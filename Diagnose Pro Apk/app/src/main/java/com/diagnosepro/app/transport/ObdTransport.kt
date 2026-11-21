@@ -12,7 +12,7 @@ class TransportOpenException(val reason: OpenFailure, message: String, cause: Th
 
 enum class OpenFailure { BLUETOOTH_OFF, PERMISSION, DEVICE_NOT_FOUND, SOCKET_FAILED, NO_OBD_SERVICE, TIMEOUT }
 
-enum class TransportType { CLASSIC, BLE, DEMO }
+enum class TransportType { CLASSIC, BLE, WIFI, DEMO }
 
 /**
  * Byte pipe to an ELM327-compatible adapter. Implementations: Bluetooth Classic SPP, BLE GATT,

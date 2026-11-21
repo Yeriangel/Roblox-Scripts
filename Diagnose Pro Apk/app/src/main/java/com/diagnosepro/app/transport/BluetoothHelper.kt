@@ -58,6 +58,9 @@ class BluetoothHelper @Inject constructor(@ApplicationContext private val contex
         } catch (e: SecurityException) { emptyList() }
     }
 
+    /** For adapters the scan does not find: any valid MAC address can be tried directly. */
+    fun isValidAddress(address: String) = android.bluetooth.BluetoothAdapter.checkBluetoothAddress(address.trim().uppercase())
+
     private fun typeOf(d: BluetoothDevice): TransportType =
         if (d.type == BluetoothDevice.DEVICE_TYPE_LE) TransportType.BLE else TransportType.CLASSIC
 
@@ -132,7 +135,10 @@ class BluetoothHelper @Inject constructor(@ApplicationContext private val contex
     }
 
     companion object {
-        private val obdNamePatterns = listOf("OBD", "ELM", "V-LINK", "VLINK", "VGATE", "ICAR", "VEEPEAK", "KONNWEI", "OBDLINK", "CAN", "KW9", "SCAN", "V-CHECK")
+        private val obdNamePatterns = listOf(
+            "OBD", "ELM", "V-LINK", "VLINK", "VGATE", "ICAR", "VEEPEAK", "KONNWEI", "OBDLINK", "CAN", "KW9", "SCAN", "V-CHECK",
+            "VLINKER", "CARISTA", "KIWI", "LELINK", "VIECAR", "UNICARSCAN", "PANLONG", "BAFX", "FIXD", "THINKDIAG", "IOS-VLINK", "ANDROID-VLINK",
+        )
 
         fun looksLikeObd(name: String): Boolean = name.uppercase().let { n -> obdNamePatterns.any { n.contains(it) } }
 

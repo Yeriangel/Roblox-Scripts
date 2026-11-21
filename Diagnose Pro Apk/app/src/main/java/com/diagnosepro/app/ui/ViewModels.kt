@@ -65,7 +65,8 @@ class MainViewModel @Inject constructor(
             val s = settingsRepo.current()
             val last = s.lastAdapter ?: return@launch
             if (!s.autoConnect || obd.state.value != ConnectionState.Disconnected) return@launch
-            if (last.type != TransportType.DEMO && (!bluetooth.hasPermissions() || !bluetooth.isEnabled)) return@launch
+            val needsBt = last.type == TransportType.CLASSIC || last.type == TransportType.BLE
+            if (needsBt && (!bluetooth.hasPermissions() || !bluetooth.isEnabled)) return@launch
             obd.connect(Target(last.address, last.name, last.type))
         }
     }
