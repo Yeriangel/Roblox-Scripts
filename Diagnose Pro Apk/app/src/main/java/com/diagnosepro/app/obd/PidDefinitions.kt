@@ -33,6 +33,8 @@ data class PidDef(
     val customCommand: String? = null,
     val customName: String? = null,
     val customUnit: String? = null,
+    /** Custom PIDs only: CAN address of the module to ask (e.g. "7B0" or "DA28F1"); null = engine/OBD default. */
+    val customHeader: String? = null,
     val formula: (IntArray) -> Double,
 ) {
     val command: String get() = customCommand ?: "01%02X".format(pid)

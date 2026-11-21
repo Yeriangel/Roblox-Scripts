@@ -82,7 +82,7 @@
 
     <!-- Permissions / Bluetooth -->
     <string name="perm_title">Bluetooth access</string>
-    <string name="perm_text">Diagnose Pro uses Bluetooth only to talk to your OBD adapter. It does not use your location and does not send any data to the internet.</string>
+    <string name="perm_text">Diagnose Pro uses Bluetooth only to talk to your OBD adapter. It does not use your location and never sends any data to the internet.</string>
     <string name="perm_text_legacy">On this Android version, scanning for Bluetooth devices requires the Location permission. The app does not use or store your location.</string>
     <string name="perm_grant">Allow</string>
     <string name="perm_denied_forever">The permission was denied. Open the app settings and allow \"Nearby devices\" (or Location on older phones).</string>
@@ -417,7 +417,7 @@
     <string name="set_onboarding">Show the setup guide again</string>
 
     <string name="about_version">Version %1$s</string>
-    <string name="about_text">Free OBD2 diagnostics. No subscription, no ads, no accounts, no internet connection. All data stays on your phone.</string>
+    <string name="about_text">Free OBD2 diagnostics. No subscription, no ads, no accounts. The app never contacts the internet: network access is used only to reach Wi-Fi adapters in the car. All data stays on your phone.</string>
     <string name="about_limits_title">What generic OBD2 can do</string>
     <string name="about_safety">The app only reads data. The only command that changes anything in the car is \"Clear codes\" (Mode 04), which always asks you twice. It never writes to, codes or tunes the car computers.</string>
 
@@ -580,4 +580,55 @@
     <string name="st_supported">Supported sensors</string>
     <string name="st_live">Live data</string>
     <string name="st_speed">RPM and speed</string>
+
+    <string name="wifi_title">Wi-Fi adapter</string>
+    <string name="wifi_text">First connect the phone to the adapter\'s Wi-Fi network (a name like WiFi_OBDII or V-LINK) in the phone settings, then tap Connect. The default address fits almost every adapter.</string>
+    <string name="wifi_address">Address and port</string>
+    <string name="wifi_open_settings">Wi-Fi settings</string>
+    <string name="manual_title">Adapter not in the list?</string>
+    <string name="manual_text">Enter the adapter\'s Bluetooth address (printed on the adapter or its box, or shown in the phone Bluetooth settings).</string>
+    <string name="manual_address">Bluetooth address</string>
+    <string name="try_ble">Try as Bluetooth LE</string>
+    <string name="try_classic">Try as Bluetooth Classic</string>
+
+    <string name="status_elm">Adapter (ELM) connection</string>
+    <string name="status_ecu">Car computer (ECU) connection</string>
+    <string name="link_connected">Connected</string>
+    <string name="link_disconnected">Disconnected</string>
+
+    <string name="tool_fullscan">Full system scan</string>
+    <string name="tool_fullscan_desc">Find faults in ABS, airbag, body and other modules</string>
+    <string name="fs_note">Searches for every control module that answers on the car\'s diagnostic bus and reads its fault codes. Read-only. Run it with the car parked; it takes about a minute and live data pauses meanwhile.</string>
+    <string name="fs_run">Scan all systems</string>
+    <string name="fs_running">Scanning…</string>
+    <string name="fs_normal">Normal</string>
+    <string name="fs_current">Current</string>
+    <string name="fs_no_dtc_service">No fault list</string>
+    <string name="fs_not_can">This scan needs a CAN car (most cars from 2008).</string>
+    <string name="fs_none">No module answered. Some cars only allow the engine computer to be read through a generic adapter.</string>
+    <string name="fs_limits">Limits: an %1$s adapter reaches only the modules on the main diagnostic bus. Modules on other buses need a professional multi-bus tool. Module names are a best guess, and codes of these modules are manufacturer-specific, so use the web search for their exact meaning. Service functions (resets, coding, adaptations) are not included.</string>
+    <string name="mod_engine">Engine (ECM)</string>
+    <string name="mod_transmission">Transmission (TCM)</string>
+    <string name="mod_abs">Brakes (ABS / ESP)</string>
+    <string name="mod_steering">Power steering</string>
+    <string name="mod_suspension">Suspension</string>
+    <string name="mod_airbag">Airbags (SRS)</string>
+    <string name="mod_cluster">Instrument cluster</string>
+    <string name="mod_body">Body electronics (BCM)</string>
+    <string name="mod_hvac">Climate control</string>
+    <string name="mod_gateway">Gateway</string>
+    <string name="mod_lighting">Lighting</string>
+    <string name="mod_entertainment">Audio / communication</string>
+    <string name="mod_security">Security / immobilizer</string>
+    <string name="mod_unknown">Control module</string>
+
+    <string name="fs_details">Module details</string>
+    <string name="fs_no_details">This module does not report identification data.</string>
+    <string name="did_system">System name</string>
+    <string name="did_part">Part number</string>
+    <string name="did_serial">Serial number</string>
+    <string name="did_software">Software version</string>
+    <string name="did_hardware">Hardware version</string>
+    <string name="custom_header">Module address (optional)</string>
+    <string name="custom_header_hint">To read a module other than the engine, enter its address from Full system scan, e.g. 7B0. Leave empty for the engine.</string>
 </resources>

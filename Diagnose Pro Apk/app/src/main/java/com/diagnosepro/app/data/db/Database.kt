@@ -81,6 +81,8 @@ data class CustomPidEntity(
     val unit: String,
     val minValue: Double = 0.0,
     val maxValue: Double = 100.0,
+    /** Optional module address (e.g. "7B0"); null = standard OBD address. */
+    val header: String? = null,
 )
 
 @Entity(tableName = "maintenance", indices = [Index("vehicleId")])
@@ -145,7 +147,7 @@ interface SessionDao {
 
 @Database(
     entities = [VehicleEntity::class, ScanEntity::class, SessionEntity::class, SampleEntity::class, CustomPidEntity::class, MaintenanceEntity::class],
-    version = 2, exportSchema = true,
+    version = 3, exportSchema = true,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun customPids(): CustomPidDao

@@ -135,6 +135,8 @@ class AppUiTest {
         shot(lang, "10_history")
         clickText("P0301")
         waitText(s(R.string.scan_title))
+        waitText(s(R.string.codes_mil_on)) // scan details are loaded asynchronously
+        waitText("P0301")
         clickText("P0301")
         waitText(s(R.string.detail_causes))
         shot(lang, "11_code_detail")
@@ -175,6 +177,14 @@ class AppUiTest {
             clickText(s(desc))
             waitText(s(waitFor))
         }
+        openTool(R.string.tool_fullscan_desc, R.string.fs_run)
+        clickText(s(R.string.fs_run))
+        waitText(s(R.string.mod_abs), 120_000)
+        rule.waitUntil(60_000) { rule.onAllNodesWithText(s(R.string.fs_run)).fetchSemanticsNodes().isNotEmpty() }
+        rule.onAllNodesWithText(s(R.string.fs_details)).onFirst().performClick()
+        waitText(s(R.string.did_system), 30_000)
+        shot(lang, "27_full_scan")
+        rule.activity.onBackPressedDispatcher.onBackPressed()
         openTool(R.string.tool_selftest_desc, R.string.st_run)
         clickText(s(R.string.st_run))
         waitText(s(R.string.st_live), 60_000)

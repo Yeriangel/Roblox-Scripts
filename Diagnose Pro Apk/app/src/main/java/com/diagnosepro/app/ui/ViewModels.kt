@@ -65,7 +65,8 @@ class MainViewModel @Inject constructor(
             val s = settingsRepo.current()
             val last = s.lastAdapter ?: return@launch
             if (!s.autoConnect || obd.state.value != ConnectionState.Disconnected) return@launch
-            if (last.type != TransportType.DEMO && (!bluetooth.hasPermissions() || !bluetooth.isEnabled)) return@launch
+            val needsBt = last.type == TransportType.CLASSIC || last.type == TransportType.BLE
+            if (needsBt && (!bluetooth.hasPermissions() || !bluetooth.isEnabled)) return@launch
             obd.connect(Target(last.address, last.name, last.type))
         }
     }
@@ -169,6 +170,25 @@ class ExtrasViewModel @Inject constructor(private val repo: com.diagnosepro.app.
     fun deleteCustomPid(id: Long) = viewModelScope.launch { repo.deleteCustomPid(id) }
     fun addMaintenance(m: com.diagnosepro.app.data.db.MaintenanceEntity) = viewModelScope.launch { repo.addMaintenance(m) }
     fun deleteMaintenance(id: Long) = viewModelScope.launch { repo.deleteMaintenance(id) }
+    val modules = MutableStateFlow<List<com.diagnosepro.app.obd.ModuleResult>?>(null)
+    val scanDone = MutableStateFlow(false)
+    val scanProgress = MutableStateFlow<Pair<Int, Int>?>(null)
+    fun scanModules() {
+        if (scanProgress.value != null) return
+        viewModelScope.launch {
+            scanProgress.value = 0 to 1
+            try { modules.value = obd.scanModules { d, t -> scanProgress.value = d to t }; scanDone.value = true } finally { scanProgress.value = null }
+        }
+    }
+    val moduleInfo = MutableStateFlow<Map<String, Map<Int, String>>>(emptyMap())
+    val moduleInfoBusy = MutableStateFlow<String?>(null)
+    fun readModuleInfo(target: String) {
+        if (moduleInfoBusy.value != null) return
+        viewModelScope.launch {
+            moduleInfoBusy.value = target
+            try { moduleInfo.value = moduleInfo.value + (target to (obd.readModuleInfo(target) ?: emptyMap())) } finally { moduleInfoBusy.value = null }
+        }
+    }
     val testSteps = MutableStateFlow<List<com.diagnosepro.app.domain.TestStep>?>(null)
     val testProgress = MutableStateFlow<Pair<Int, Int>?>(null)
     fun runSelfTest() {

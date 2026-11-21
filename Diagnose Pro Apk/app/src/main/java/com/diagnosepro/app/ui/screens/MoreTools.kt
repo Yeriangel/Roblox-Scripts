@@ -184,7 +184,7 @@ fun CustomPidsScreen(vm: MainViewModel, onBack: () -> Unit, evm: ExtrasViewModel
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Column(Modifier.weight(1f)) {
                             Text(p.name, style = MaterialTheme.typography.titleMedium)
-                            LtrText("${p.command}  =  ${p.formula}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            LtrText((p.header?.let { "[$it] " } ?: "") + "${p.command}  =  ${p.formula}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             if (state.isConnected) {
                                 val v = live[CustomPid.key(p.id)]?.value
                                 LtrText(v?.let { "${Units.format(it, 1)} ${p.unit}" } ?: "— (${stringResource(R.string.custom_no_answer)})",
@@ -206,6 +206,7 @@ fun CustomPidsScreen(vm: MainViewModel, onBack: () -> Unit, evm: ExtrasViewModel
         var unit by remember(p) { mutableStateOf(p.unit) }
         var min by remember(p) { mutableStateOf(num(p.minValue, 0)) }
         var max by remember(p) { mutableStateOf(num(p.maxValue, 0)) }
+        var header by remember(p) { mutableStateOf(p.header.orEmpty()) }
         val cmdOk = CustomPid.normalizeCommand(command)
         val formulaError = runCatching { Expression.parse(formula); null as String? }.getOrElse { it.message ?: "?" }
         AlertDialog(
@@ -220,6 +221,8 @@ fun CustomPidsScreen(vm: MainViewModel, onBack: () -> Unit, evm: ExtrasViewModel
                         isError = formula.isNotEmpty() && formulaError != null,
                         supportingText = { Text(if (formula.isNotEmpty() && formulaError != null) stringResource(R.string.custom_bad_formula, formulaError) else stringResource(R.string.custom_formula_hint)) })
                     OutlinedTextField(unit, { unit = it }, label = { Text(stringResource(R.string.custom_unit)) }, singleLine = true)
+                    OutlinedTextField(header, { header = it }, label = { Text(stringResource(R.string.custom_header)) }, singleLine = true,
+                        isError = !CustomPid.isHeaderValid(header), supportingText = { Text(stringResource(R.string.custom_header_hint)) })
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         OutlinedTextField(min, { min = it }, Modifier.weight(1f), label = { Text(stringResource(R.string.custom_min)) }, singleLine = true, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number))
                         OutlinedTextField(max, { max = it }, Modifier.weight(1f), label = { Text(stringResource(R.string.custom_max)) }, singleLine = true, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number))
@@ -227,9 +230,9 @@ fun CustomPidsScreen(vm: MainViewModel, onBack: () -> Unit, evm: ExtrasViewModel
                 }
             },
             confirmButton = {
-                Button(enabled = name.isNotBlank() && cmdOk != null && formulaError == null, onClick = {
+                Button(enabled = name.isNotBlank() && cmdOk != null && formulaError == null && CustomPid.isHeaderValid(header), onClick = {
                     evm.saveCustomPid(p.copy(name = name.trim(), command = cmdOk!!, formula = formula.trim(), unit = unit.trim(),
-                        minValue = min.toDoubleOrNull() ?: 0.0, maxValue = max.toDoubleOrNull() ?: 100.0))
+                        minValue = min.toDoubleOrNull() ?: 0.0, maxValue = max.toDoubleOrNull() ?: 100.0, header = CustomPid.normalizeHeader(header)))
                     editing = null
                 }) { Text(stringResource(R.string.save)) }
             },

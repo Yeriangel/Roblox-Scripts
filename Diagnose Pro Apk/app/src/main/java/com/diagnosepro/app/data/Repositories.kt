@@ -28,7 +28,14 @@ import javax.inject.Singleton
 object DataModule {
     @Provides @Singleton
     fun db(@ApplicationContext ctx: Context): AppDatabase =
-        Room.databaseBuilder(ctx, AppDatabase::class.java, "diagnosepro.db").addMigrations(MIGRATION_1_2).build()
+        Room.databaseBuilder(ctx, AppDatabase::class.java, "diagnosepro.db").addMigrations(MIGRATION_1_2, MIGRATION_2_3).build()
+
+    /** v3: custom PIDs can target a specific module. */
+    val MIGRATION_2_3 = object : androidx.room.migration.Migration(2, 3) {
+        override fun migrate(db: androidx.sqlite.db.SupportSQLiteDatabase) {
+            db.execSQL("ALTER TABLE `custom_pids` ADD COLUMN `header` TEXT")
+        }
+    }
 
     /** v2 adds custom PIDs and the maintenance log; existing scans and trips are kept. */
     val MIGRATION_1_2 = object : androidx.room.migration.Migration(1, 2) {

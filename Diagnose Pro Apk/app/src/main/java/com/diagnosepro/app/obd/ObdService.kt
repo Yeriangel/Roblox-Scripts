@@ -39,6 +39,33 @@ data class VehicleInfo(
 class ObdService(val elm: Elm327) {
 
     val isCan: Boolean get() = elm.protocol?.isCan ?: true
+    private val isExtended: Boolean get() = elm.protocol?.canHeaderChars == 8
+    /** ELM327's standard OBD request address: functional 7DF (11-bit) or 18 DB 33 F1 (29-bit). */
+    private val defaultHeader: String get() = if (isExtended) "DB33F1" else "7DF"
+
+    /**
+     * Standard UDS identification of one module (read-only service 0x22, ids 0xF1xx):
+     * part number, serial, software/hardware version, system name, VIN.
+     */
+    suspend fun readModuleInfo(target: String): Map<Int, String> {
+        if (!isCan) return emptyMap()
+        return elm.batch {
+            val out = LinkedHashMap<Int, String>()
+            try {
+                setHeaders(true)
+                if (isExtended) send("ATCP18")
+                send("ATSH$target")
+                for (did in Uds.IDENT_DIDS) {
+                    val cmd = "22%04X".format(did)
+                    val data = query(cmd, 3_000).messagesOrEmpty().firstNotNullOfOrNull { CustomPid.dataBytes(cmd, it.bytes) } ?: continue
+                    Uds.printable(data)?.let { out[did] = it }
+                }
+            } finally {
+                withContext(NonCancellable) { send("ATSH$defaultHeader"); setHeaders(false) }
+            }
+            out
+        }
+    }
 
     /** Walks 0100, 0120, 0140 ... as long as the "next range supported" bit is set. */
     suspend fun readSupportedPids(mode: Int = 0x01): Set<Int> {
@@ -62,9 +89,18 @@ class ObdService(val elm: Elm327) {
         if (def.key == Pids.KEY_ADAPTER_VOLTAGE) return readVoltage()
         if (def.isComputed) return null
         if (def.isCustom) {
-            for (m in elm.query(def.command).messagesOrEmpty()) {
-                CustomPid.dataBytes(def.command, m.bytes)?.let { return Pids.decode(def, it) }
+            val header = def.customHeader
+            val msgs = if (header == null) elm.query(def.command).messagesOrEmpty() else elm.batch {
+                // Ask a specific module, then put the adapter back on the standard OBD address.
+                try {
+                    if (isExtended) send("ATCP18")
+                    send("ATSH$header")
+                    query(def.command).messagesOrEmpty()
+                } finally {
+                    withContext(NonCancellable) { send("ATSH$defaultHeader") }
+                }
             }
+            for (m in msgs) CustomPid.dataBytes(def.command, m.bytes)?.let { return Pids.decode(def, it) }
             return null
         }
         val r = elm.query(def.command)
@@ -156,6 +192,50 @@ class ObdService(val elm: Elm327) {
             // Must run even if the caller was cancelled, or the adapter stays in headers mode.
             withContext(NonCancellable) { setHeaders(false) }
         }
+    }
+
+    /**
+     * Full-system scan (CAN cars only): finds every control module that answers standard UDS on
+     * the OBD connector's CAN bus and reads its fault codes. Read-only: it sends only
+     * "10 01" (default session) as a ping and "19 02" (read DTCs).
+     *
+     * An ELM327 is wired to one CAN bus (pins 6/14). Modules on other buses or behind a
+     * gateway that does not route diagnostics cannot be reached — that needs a multiplexing tool.
+     *
+     * The adapter is fully re-initialized afterwards, so normal OBD polling continues unchanged.
+     */
+    suspend fun scanModules(manufacturer: String?, progress: (Int, Int) -> Unit): List<ModuleResult>? {
+        val p = elm.protocol ?: return null
+        if (!p.isCan || p == com.diagnosepro.app.elm327.ObdProtocol.J1939) return null
+        val extended = p.canHeaderChars == 8
+        val result = try {
+            elm.batch {
+                setHeaders(true)
+                send("ATCAF1"); send("ATAR")
+                send("ATST19")                       // 100 ms: silent addresses fail fast
+                if (extended) send("ATCP18")
+                val targets = Uds.probeTargets(extended)
+                val found = LinkedHashMap<String, String>()
+                targets.forEachIndexed { i, target ->
+                    progress(i, targets.size)
+                    if (send("ATSH$target").isOk) {
+                        query("1001", 1_500).messagesOrEmpty().firstOrNull { it.bytes.firstOrNull() == 0x50 }?.let { found[target] = it.ecu }
+                    }
+                }
+                send("ATST64")                       // longer wait for multi-frame DTC lists
+                found.map { (target, ecu) ->
+                    send("ATSH$target")
+                    val dtcs = query("1902%02X".format(Uds.STATUS_MASK), 4_000).messagesOrEmpty().firstNotNullOfOrNull { Uds.decodeDtcs(it.bytes) }
+                    val address = if (extended) ecu else target
+                    ModuleResult(target, address, Uds.moduleKind(target, ecu, extended, manufacturer), dtcs)
+                }
+            }
+        } finally {
+            // Restore every adapter setting (headers, timing, addressing) to the normal OBD state.
+            withContext(NonCancellable) { runCatching { elm.initialize() } }
+        }
+        progress(1, 1)
+        return result
     }
 
     /** Mode 06 on-board monitoring test results. Only the CAN format is supported. */
