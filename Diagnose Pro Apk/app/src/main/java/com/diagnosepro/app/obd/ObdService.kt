@@ -60,6 +60,13 @@ class ObdService(val elm: Elm327) {
 
     suspend fun readPid(def: PidDef): Double? {
         if (def.key == Pids.KEY_ADAPTER_VOLTAGE) return readVoltage()
+        if (def.isComputed) return null
+        if (def.isCustom) {
+            for (m in elm.query(def.command).messagesOrEmpty()) {
+                CustomPid.dataBytes(def.command, m.bytes)?.let { return Pids.decode(def, it) }
+            }
+            return null
+        }
         val r = elm.query(def.command)
         val data = ObdDecoders.mode01Data(r.messagesOrEmpty(), def.pid) ?: return null
         return Pids.decode(def, data)
@@ -118,7 +125,7 @@ class ObdService(val elm: Elm327) {
         val supported = readSupportedPids(0x02).ifEmpty { Pids.all.map { it.pid }.filter { it in 0x04..0x11 }.toSet() }
         val values = mutableListOf<Pair<PidDef, Double>>()
         for (def in Pids.all) {
-            if (def.pid !in supported) continue
+            if (def.pid !in supported || def.pid > 0xFF) continue
             val d = ObdDecoders.mode02Data(elm.query("02%02X00".format(def.pid)).messagesOrEmpty(), def.pid) ?: continue
             Pids.decode(def, d)?.let { values += def to it }
         }

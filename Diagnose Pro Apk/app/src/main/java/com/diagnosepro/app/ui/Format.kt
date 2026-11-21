@@ -21,6 +21,7 @@ import com.diagnosepro.app.i18n.LocaleManager
 import com.diagnosepro.app.obd.DtcKind
 import com.diagnosepro.app.obd.ObdDecoders
 import com.diagnosepro.app.obd.PidDef
+import com.diagnosepro.app.obd.Pids
 import com.diagnosepro.app.obd.Quantity
 import java.text.DateFormat
 import java.util.Date
@@ -60,6 +61,33 @@ fun pidNameRes(key: String): Int = when (key) {
     "oil_temp" -> R.string.pid_oil_temp
     "fuel_rate" -> R.string.pid_fuel_rate
     "odometer" -> R.string.pid_odometer
+    "rail_pressure_rel" -> R.string.pid_rail_pressure_rel
+    "rail_pressure" -> R.string.pid_rail_pressure
+    "egr_commanded" -> R.string.pid_egr_commanded
+    "egr_error" -> R.string.pid_egr_error
+    "evap_purge" -> R.string.pid_evap_purge
+    "warmups_cleared" -> R.string.pid_warmups_cleared
+    "cat_temp_b1s1" -> R.string.pid_cat_temp_b1s1
+    "cat_temp_b2s1" -> R.string.pid_cat_temp_b2s1
+    "cat_temp_b1s2" -> R.string.pid_cat_temp_b1s2
+    "absolute_load" -> R.string.pid_absolute_load
+    "commanded_lambda" -> R.string.pid_commanded_lambda
+    "relative_throttle" -> R.string.pid_relative_throttle
+    "accel_pedal" -> R.string.pid_accel_pedal
+    "commanded_throttle" -> R.string.pid_commanded_throttle
+    "time_mil_on" -> R.string.pid_time_mil_on
+    "time_since_clear" -> R.string.pid_time_since_clear
+    "ethanol" -> R.string.pid_ethanol
+    "rail_pressure_abs" -> R.string.pid_rail_pressure_abs
+    "relative_pedal" -> R.string.pid_relative_pedal
+    "hybrid_battery" -> R.string.pid_hybrid_battery
+    "injection_timing" -> R.string.pid_injection_timing
+    "torque_demand" -> R.string.pid_torque_demand
+    "torque_actual" -> R.string.pid_torque_actual
+    "torque_reference" -> R.string.pid_torque_reference
+    "boost" -> R.string.pid_boost
+    "power_est" -> R.string.pid_power_est
+    "consumption_est" -> R.string.pid_consumption_est
     else -> R.string.pid_adapter_voltage
 }
 
@@ -156,6 +184,7 @@ fun ecuLabel(ctx: Context, ecu: String): String {
 
 /** Formats a PID value in the user's units: returns (number, unit). */
 fun formatPid(def: PidDef, base: Double, units: UnitPrefs): Pair<String, String> {
+    if (def.isCustom) return Units.format(base, def.decimals) to def.customUnit.orEmpty()
     if (def.quantity == Quantity.TIME) return Units.formatDuration(base.toLong()) to ""
     val v = Units.convert(def.quantity, base, units)
     return Units.format(v, Units.decimalsFor(def.quantity, def.decimals, units)) to Units.unitLabel(def.quantity, units)
@@ -189,5 +218,10 @@ fun isHebrewUi(): Boolean = LocaleManager.isHebrew(currentLocale())
 @Composable
 fun isRtl(): Boolean = LocalLayoutDirection.current == LayoutDirection.Rtl
 
+/** Display name of any PID key, including user-defined ones. */
 @Composable
-fun pidName(key: String): String = stringResource(pidNameRes(key))
+fun pidName(key: String): String = Pids.byKey(key)?.customName ?: stringResource(pidNameRes(key))
+
+fun pidLabel(ctx: Context, key: String): String = Pids.byKey(key)?.customName ?: ctx.getString(pidNameRes(key))
+
+fun unitOf(def: PidDef, units: UnitPrefs): String = def.customUnit ?: Units.unitLabel(def.quantity, units)

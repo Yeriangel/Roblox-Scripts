@@ -74,6 +74,18 @@ class Elm327DemoTest {
         assertTrue(obd.readMode06()!!.isNotEmpty())
     }
 
+    @Test fun selfTestPassesOnSimulatedCarAndNeverClearsCodes() = runBlocking {
+        val sent = mutableListOf<String>()
+        val t = DemoTransport(latencyMs = 0); t.open()
+        val elm = Elm327(t, RawLogger { d, text -> if (d == RawLogger.Direction.TX) sent += text })
+        val info = elm.initialize()
+        val steps = com.diagnosepro.app.domain.SelfTest(ObdService(elm), info).run { _, _ -> }
+        assertEquals(com.diagnosepro.app.domain.TestStepId.entries.size, steps.size)
+        assertTrue(steps.toString(), steps.none { it.status == com.diagnosepro.app.domain.TestStatus.FAIL })
+        assertTrue("self-test must be read-only", sent.none { it == "04" || it.startsWith("08") })
+        assertTrue(steps.first { it.id == com.diagnosepro.app.domain.TestStepId.STORED }.detail.contains("P0301@7E8"))
+    }
+
     @Test fun disconnectMidReadThrowsClosedNotCrash() = runBlocking {
         val (t, elm) = setup(); elm.initialize()
         t.close()

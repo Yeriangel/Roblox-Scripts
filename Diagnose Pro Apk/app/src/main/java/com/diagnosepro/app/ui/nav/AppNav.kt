@@ -51,7 +51,15 @@ import com.diagnosepro.app.i18n.Bidi
 import com.diagnosepro.app.ui.MainViewModel
 import com.diagnosepro.app.ui.components.DemoBadge
 import com.diagnosepro.app.ui.screens.AboutScreen
-import com.diagnosepro.app.ui.screens.AccelScreen
+import com.diagnosepro.app.ui.screens.AlertBanner
+import com.diagnosepro.app.ui.screens.AlertsScreen
+import com.diagnosepro.app.ui.screens.AllSensorsScreen
+import com.diagnosepro.app.ui.screens.BatteryTestScreen
+import com.diagnosepro.app.ui.screens.CustomPidsScreen
+import com.diagnosepro.app.ui.screens.DtcSearchScreen
+import com.diagnosepro.app.ui.screens.HudScreen
+import com.diagnosepro.app.ui.screens.MaintenanceScreen
+import com.diagnosepro.app.ui.screens.PerformanceScreen
 import com.diagnosepro.app.ui.screens.CodeDetailScreen
 import com.diagnosepro.app.ui.screens.CodesScreen
 import com.diagnosepro.app.ui.screens.ConnectScreen
@@ -93,6 +101,14 @@ object Routes {
     const val ACCEL = "accel"
     const val CONSOLE = "console"
     const val ABOUT = "about"
+    const val SENSORS = "sensors"
+    const val CUSTOM_PIDS = "custom_pids"
+    const val ALERTS = "alerts"
+    const val HUD = "hud"
+    const val BATTERY = "battery"
+    const val DTC_SEARCH = "dtc_search"
+    const val MAINTENANCE = "maintenance"
+    const val SELFTEST = "selftest"
     fun code(code: String, ecu: String? = null, kind: String? = null) = "code/$code?ecu=${ecu.orEmpty()}&kind=${kind.orEmpty()}"
     fun scan(id: Long) = "scan/$id"
     fun session(id: Long) = "session/$id"
@@ -139,7 +155,11 @@ fun DiagnoseProApp(vm: MainViewModel, settings: AppSettings) {
         },
     ) { padding ->
         Box(Modifier.padding(if (isTab) padding else androidx.compose.foundation.layout.PaddingValues(0.dp))) {
-            AppNavHost(nav, vm, if (settings.onboardingDone) Routes.DASHBOARD else Routes.ONBOARDING)
+            androidx.compose.foundation.layout.Column {
+                // Firing alarms are visible on every main tab.
+                if (isTab) AlertBanner(vm)
+                AppNavHost(nav, vm, if (settings.onboardingDone) Routes.DASHBOARD else Routes.ONBOARDING)
+            }
         }
     }
 }
@@ -209,7 +229,15 @@ private fun AppNavHost(nav: NavHostController, vm: MainViewModel, start: String)
         composable(Routes.VEHICLE) { VehicleInfoScreen(vm, back) }
         composable(Routes.MODE06) { Mode06Screen(vm, back) }
         composable(Routes.FUEL) { FuelScreen(vm, back) }
-        composable(Routes.ACCEL) { AccelScreen(vm, back) }
+        composable(Routes.ACCEL) { PerformanceScreen(vm, back) }
+        composable(Routes.SENSORS) { AllSensorsScreen(vm, back) }
+        composable(Routes.CUSTOM_PIDS) { CustomPidsScreen(vm, back) }
+        composable(Routes.ALERTS) { AlertsScreen(vm, back) }
+        composable(Routes.HUD) { HudScreen(vm, back) }
+        composable(Routes.BATTERY) { BatteryTestScreen(vm, back) }
+        composable(Routes.DTC_SEARCH) { DtcSearchScreen(vm, back, nav) }
+        composable(Routes.MAINTENANCE) { MaintenanceScreen(vm, back) }
+        composable(Routes.SELFTEST) { com.diagnosepro.app.ui.screens.SelfTestScreen(vm, back) }
         composable(Routes.CONSOLE) { ConsoleScreen(vm, back) }
         composable(Routes.ABOUT) { AboutScreen(back) }
         composable(

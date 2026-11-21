@@ -365,9 +365,6 @@
     <string name="tool_mode06_desc">התוצאות הגולמיות של הבדיקות העצמיות של הרכב</string>
     <string name="tool_fuel">צריכת דלק</string>
     <string name="tool_fuel_desc">הערכה לפי זרימת אוויר ומהירות</string>
-    <string name="tool_accel">מדידת 0-100 קמ״ש</string>
-    <string name="tool_accel_mph">מדידת 0-60 מייל</string>
-    <string name="tool_accel_desc">מדידת תאוצה לפי המהירות החיה</string>
     <string name="tool_console">קונסולת מפתחים</string>
     <string name="tool_console_desc">פקודות ותשובות גולמיות של המתאם</string>
 
@@ -387,15 +384,6 @@
     <string name="fuel_need_maf">הרכב לא מדווח זרימת אוויר (MAF), לכן אי אפשר להעריך צריכה.</string>
     <string name="fuel_reset">איפוס ממוצע</string>
 
-    <string name="accel_text">עצרו את הרכב לגמרי, הקישו על דריכה ואז האיצו. המדידה מתחילה כשהרכב זז ונעצרת במהירות היעד. רק בכביש סגור או במסלול, ולפי החוק.</string>
-    <string name="accel_arm">דריכה</string>
-    <string name="accel_armed">דרוך — ממתין שהרכב יזוז</string>
-    <string name="accel_need_stop">עצרו את הרכב כדי לדרוך את המדידה.</string>
-    <string name="accel_running">מודד…</string>
-    <string name="accel_result">תוצאה</string>
-    <string name="accel_best">הטוב ביותר: %1$s</string>
-    <string name="accel_reset">איפוס</string>
-    <string name="accel_note">הדיוק מוגבל בקצב שבו הרכב מדווח מהירות (בערך 0.1–0.3 שנ׳).</string>
 
     <string name="console_clear">ניקוי</string>
     <string name="console_empty">עדיין אין תעבורה.</string>
@@ -446,4 +434,154 @@
 
     <string name="notif_channel">חיבור למתאם</string>
     <string name="notif_connected">מחובר אל %1$s</string>
+
+    <!-- Extended PIDs -->
+    <string name="pid_rail_pressure_rel">לחץ מסילת דלק (יחסי)</string>
+    <string name="pid_rail_pressure">לחץ מסילת דלק</string>
+    <string name="pid_egr_commanded">EGR מבוקש</string>
+    <string name="pid_egr_error">סטיית EGR</string>
+    <string name="pid_evap_purge">שסתום אדי דלק (EVAP)</string>
+    <string name="pid_warmups_cleared">חימומי מנוע מאז מחיקה</string>
+    <string name="pid_cat_temp_b1s1">טמפ׳ ממיר קטליטי B1 S1</string>
+    <string name="pid_cat_temp_b2s1">טמפ׳ ממיר קטליטי B2 S1</string>
+    <string name="pid_cat_temp_b1s2">טמפ׳ ממיר קטליטי B1 S2</string>
+    <string name="pid_absolute_load">עומס מוחלט</string>
+    <string name="pid_commanded_lambda">למבדה מבוקשת</string>
+    <string name="pid_relative_throttle">מצערת יחסית</string>
+    <string name="pid_accel_pedal">דוושת גז</string>
+    <string name="pid_commanded_throttle">מצערת מבוקשת</string>
+    <string name="pid_time_mil_on">זמן עם נורית דולקת</string>
+    <string name="pid_time_since_clear">זמן מאז מחיקת קודים</string>
+    <string name="pid_ethanol">אתנול בדלק</string>
+    <string name="pid_rail_pressure_abs">לחץ מסילת דלק (מוחלט)</string>
+    <string name="pid_relative_pedal">מיקום דוושה יחסי</string>
+    <string name="pid_hybrid_battery">טעינת סוללה היברידית</string>
+    <string name="pid_injection_timing">תזמון הזרקה</string>
+    <string name="pid_torque_demand">מומנט מבוקש</string>
+    <string name="pid_torque_actual">מומנט בפועל</string>
+    <string name="pid_torque_reference">מומנט ייחוס</string>
+    <string name="pid_boost">לחץ טורבו (מחושב)</string>
+    <string name="pid_power_est">הספק (הערכה)</string>
+    <string name="pid_consumption_est">צריכת דלק (הערכה)</string>
+    <string name="stats_minmax">מינ׳ %1$s · מקס׳ %2$s</string>
+
+    <!-- New tools -->
+    <string name="tool_sensors">כל החיישנים</string>
+    <string name="tool_sensors_desc">כל הערכים שהרכב מדווח, במסך אחד</string>
+    <string name="tool_custom">חיישנים מותאמים אישית</string>
+    <string name="tool_custom_desc">הוספת חיישנים משלכם עם נוסחה</string>
+    <string name="tool_alerts">התראות</string>
+    <string name="tool_alerts_desc">אזהרה כשערך חוצה גבול שקבעתם</string>
+    <string name="tool_hud">מצב HUD</string>
+    <string name="tool_hud_desc">תצוגת מהירות גדולה, במראה לשמשה הקדמית</string>
+    <string name="tool_perf">מבחני ביצועים</string>
+    <string name="tool_perf_desc">0–100, 80–120, רבע מייל ובלימה</string>
+    <string name="tool_battery">בדיקת מצבר</string>
+    <string name="tool_battery_desc">בדיקת המצבר, המתנע והאלטרנטור</string>
+    <string name="tool_dtc_search">חיפוש קוד</string>
+    <string name="tool_dtc_search_desc">חיפוש במאגר קודי התקלה הלא-מקוון</string>
+    <string name="tool_maintenance">יומן טיפולים</string>
+    <string name="tool_maintenance_desc">היסטוריית טיפולים ותזכורות</string>
+
+    <string name="sensors_waiting">קורא חיישנים…</string>
+    <string name="reset_minmax">איפוס מינימום/מקסימום</string>
+
+    <string name="custom_add">הוספת חיישן מותאם</string>
+    <string name="custom_edit">עריכת חיישן מותאם</string>
+    <string name="custom_name">שם</string>
+    <string name="custom_command">פקודה (הקסה)</string>
+    <string name="custom_command_hint">פקודות קריאה בלבד: 01xx,‏ 21xx או 22xxxx. לדוגמה: 221234</string>
+    <string name="custom_formula">נוסחה</string>
+    <string name="custom_formula_hint">A, B, C… הם בתי הנתונים. לדוגמה: ‎(A*256+B)/4</string>
+    <string name="custom_unit">יחידה</string>
+    <string name="custom_min">מינימום במד</string>
+    <string name="custom_max">מקסימום במד</string>
+    <string name="custom_bad_command">מותרות רק פקודות קריאה: 01xx,‏ 21xx או 22xxxx.</string>
+    <string name="custom_bad_formula">שגיאה בנוסחה: %1$s</string>
+    <string name="custom_empty">עדיין אין חיישנים מותאמים.</string>
+    <string name="custom_note">חיישנים מותאמים קוראים נתונים ייחודיים ליצרן. צריך את הפקודה והנוסחה הנכונות לדגם הרכב שלכם (חפשו ברשת את רשימת ה-PID של הדגם). אחרי ההוספה אפשר להציג אותו דרך \"בחירת מדים\" או בגרף החי.</string>
+    <string name="custom_no_answer">אין תשובה</string>
+
+    <string name="alerts_add">הוספת התראה</string>
+    <string name="alerts_sensor">חיישן</string>
+    <string name="alerts_above">מעל</string>
+    <string name="alerts_below">מתחת</string>
+    <string name="alerts_value">גבול (%1$s)</string>
+    <string name="alerts_sound">השמעת צליל</string>
+    <string name="alerts_empty">אין התראות. הוסיפו התראה כדי לקבל אזהרה על התחממות, מתח נמוך ועוד.</string>
+    <string name="alerts_note">ההתראות נבדקות בכל מסך כל עוד יש חיבור.</string>
+    <string name="alert_banner">התראה: %1$s</string>
+
+    <string name="hud_mirror">מראה</string>
+    <string name="hud_hint">הניחו את הטלפון על לוח המחוונים: התמונה ההפוכה משתקפת בשמשה. עובד הכי טוב בלילה.</string>
+
+    <string name="perf_text">עצרו את הרכב ואז סעו. כל תוצאה מתמלאת לבד כשמגיעים למהירות או למרחק שלה. רק בכביש סגור או במסלול, ולפי החוק.</string>
+    <string name="perf_0_60">0–60 קמ״ש</string>
+    <string name="perf_0_100">0–100 קמ״ש</string>
+    <string name="perf_80_120">80–120 קמ״ש</string>
+    <string name="perf_quarter">רבע מייל (402 מ׳)</string>
+    <string name="perf_trap">מהירות ב-402 מ׳</string>
+    <string name="perf_brake">בלימה 100–0 קמ״ש</string>
+    <string name="perf_brake_dist">מרחק בלימה</string>
+    <string name="perf_max_speed">מהירות מרבית</string>
+    <string name="perf_power">הספק שיא (הערכה)</string>
+    <string name="perf_running">מדידה מתבצעת…</string>
+    <string name="perf_reset">איפוס</string>
+    <string name="perf_note">הדיוק מוגבל בקצב שבו הרכב מדווח מהירות (כמה פעמים בשנייה). ההספק מוערך לפי זרימת האוויר.</string>
+
+    <string name="battery_text">שלוש מדידות קצרות של מערכת ה-12V, לפי קריאת המתח של המתאם.</string>
+    <string name="battery_step1">1. מנוע כבוי, הצתה במצב ON</string>
+    <string name="battery_measure_rest">מדידת מתח במנוחה</string>
+    <string name="battery_step2">2. הקישו על הכפתור ואז התניעו</string>
+    <string name="battery_measure_crank">התחלת בדיקת התנעה (15 שנ׳)</string>
+    <string name="battery_step3">3. מנוע בסרק</string>
+    <string name="battery_measure_charge">מדידת מתח טעינה</string>
+    <string name="battery_resting">מתח במנוחה</string>
+    <string name="battery_cranking">המתח הנמוך ביותר בהתנעה</string>
+    <string name="battery_charging">מתח טעינה</string>
+    <string name="battery_measuring">מודד…</string>
+    <string name="battery_crank_now">התניעו עכשיו…</string>
+    <string name="verdict_good">תקין</string>
+    <string name="verdict_weak">חלש</string>
+    <string name="verdict_bad">בעיה</string>
+    <string name="battery_note">המדידה נעשית בשקע ה-OBD, שם המתח מעט נמוך מאשר על המצבר, והמתאם דוגם לאט, כך שנפילת מתח קצרה מאוד עלולה להתפספס. התייחסו לזה כאינדיקציה.</string>
+
+    <string name="dtc_search_hint">קוד או מילת חיפוש (P0420, הצתה…)</string>
+    <string name="dtc_search_empty">לא נמצאו קודים מתאימים.</string>
+    <string name="dtc_search_intro">הקלידו קוד או מילה כדי לחפש בין %1$d קודים, בלי אינטרנט.</string>
+
+    <string name="maint_add">הוספת רשומה</string>
+    <string name="maint_title">מה בוצע (למשל החלפת שמן)</string>
+    <string name="maint_odometer">קילומטראז׳</string>
+    <string name="maint_cost">עלות</string>
+    <string name="maint_note">הערות</string>
+    <string name="maint_remind">להזכיר לי ב- (ק״מ)</string>
+    <string name="maint_empty">עדיין אין רשומות. תעדו כאן טיפולים ותיקונים, וקבעו תזכורת לטיפול הבא.</string>
+    <string name="maint_due">הגיע הזמן</string>
+    <string name="maint_remind_at">תזכורת ב-%1$s</string>
+    <string name="maint_due_banner">הגיע זמן טיפול: %1$s</string>
+
+    <string name="terminal_hint">פקודה (AT… או OBD לקריאה בלבד)</string>
+    <string name="terminal_send">שליחה</string>
+    <string name="terminal_blocked">נחסם. מותרות רק פקודות מתאם ושירותי קריאה בלבד (01, 02, 03, 06, 07, 09, 0A, 21, 22).</string>
+
+    <string name="set_fuel">עלות דלק</string>
+    <string name="set_fuel_price">מחיר לליטר</string>
+    <string name="set_currency">מטבע</string>
+    <string name="fuel_cost">עלות הדלק בנסיעה</string>
+    <string name="fuel_cost_100">עלות ל-100 ק״מ</string>
+
+    <string name="tool_selftest">בדיקה עצמית (מתאם ורכב)</string>
+    <string name="tool_selftest_desc">בדיקה שכל פעולות הקריאה עובדות ברכב שלכם</string>
+    <string name="st_note">מריץ פעם אחת כל פעולת קריאה מול הרכב המחובר ומציג מה עבד. הבדיקה רק קוראת: היא לא מוחקת קודים ולא משנה שום דבר. לוקח בערך דקה.</string>
+    <string name="st_run">הרצת בדיקה עצמית</string>
+    <string name="st_running">בודק…</string>
+    <string name="st_share">שיתוף הדוח</string>
+    <string name="st_all_ok">כל מה שהרכב שלכם תומך בו עובד.</string>
+    <string name="st_some_failed">%1$d בדיקות נכשלו</string>
+    <string name="st_share_hint">פריטים באפור הם פעולות שהרכב הזה לא מספק, וזה תקין. אם משהו אדום, הקישו על סמל השיתוף ושלחו את הדוח.</string>
+    <string name="st_adapter">מתאם ופרוטוקול</string>
+    <string name="st_supported">חיישנים נתמכים</string>
+    <string name="st_live">נתונים חיים</string>
+    <string name="st_speed">סל״ד ומהירות</string>
 </resources>

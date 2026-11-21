@@ -108,6 +108,17 @@ fun SettingsScreen(vm: MainViewModel, nav: NavController) {
         SwitchRow(stringResource(R.string.set_keep_screen), null, s.keepScreenOn) { vm.setKeepScreenOn(it) }
         if (s.lastAdapter != null) TextButton(onClick = { vm.forgetAdapter() }) { Text(stringResource(R.string.set_forget_adapter) + " (" + Bidi.ltr(s.lastAdapter.name) + ")") }
 
+        SectionTitle(stringResource(R.string.set_fuel))
+        var price by remember(s.fuelPrice) { mutableStateOf(if (s.fuelPrice > 0) s.fuelPrice.toString() else "") }
+        var currency by remember(s.currency) { mutableStateOf(s.currency) }
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            androidx.compose.material3.OutlinedTextField(price, { price = it; vm.setFuelPrice(it.toDoubleOrNull() ?: 0.0, currency) }, Modifier.weight(2f), singleLine = true,
+                label = { Text(stringResource(R.string.set_fuel_price)) },
+                keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = androidx.compose.ui.text.input.KeyboardType.Decimal))
+            androidx.compose.material3.OutlinedTextField(currency, { currency = it.take(4); vm.setFuelPrice(price.toDoubleOrNull() ?: 0.0, it.take(4)) }, Modifier.weight(1f), singleLine = true,
+                label = { Text(stringResource(R.string.set_currency)) })
+        }
+
         SectionTitle(stringResource(R.string.set_appearance))
         Label(stringResource(R.string.set_theme))
         Segmented(listOf(ThemeMode.DARK to stringResource(R.string.theme_dark), ThemeMode.LIGHT to stringResource(R.string.theme_light), ThemeMode.SYSTEM to stringResource(R.string.theme_system)), s.theme) { vm.setTheme(it) }

@@ -12,7 +12,14 @@ can clear codes to turn off the Check Engine light. Full Hebrew and English supp
 
 ## Install the APK on your phone
 
-1. Copy `release/DiagnosePro-debug.apk` to the phone, or download it on the phone itself.
+Two APKs are in `release/`:
+- `DiagnosePro-release.apk` (recommended): signed release build, shrunk with R8 (~2.5 MB).
+- `DiagnosePro-debug.apk`: debug build (~19 MB).
+
+They are signed with different keys, so **uninstall one before installing the other** (Android refuses to
+install over an app signed with a different key).
+
+1. Copy the APK to the phone, or download it on the phone itself.
 2. Open it. Android asks you to allow **Install unknown apps** for the app you opened it with
    (Files, Chrome, etc.). Allow it, go back and tap **Install**.
 3. Play Protect may warn about an unknown developer: tap **More details → Install anyway**.
@@ -44,6 +51,25 @@ No adapter? Choose **Demo mode** to try every screen with a simulated car.
 | Trip recording with summary, replay and CSV export; scan history with comparison against the previous scan | Dashboard → *Record trip*, History |
 | Language (Hebrew / English / system), units, polling speed, auto-connect, keep screen on, theme, developer console | Settings |
 
+**Added in 1.1** (all under Dashboard → Tools):
+
+| Feature | Notes |
+|---|---|
+| ~25 more sensors + calculated ones | fuel rail pressure, EGR, catalyst temperature, lambda, pedal, torque…; turbo boost, power and instant consumption are estimates |
+| All sensors | every supported value on one screen with min/max |
+| Custom PIDs | your own read command (modes 01, 21, 22 only) with a formula over bytes A..H, e.g. `(A*256+B)/4` |
+| Alarms | sound + banner when a value goes above/below your limit (default: coolant > 110 °C) |
+| HUD mode | large speed/RPM, mirrored for windshield reflection |
+| Performance tests | 0-60, 0-100, 80-120 km/h, quarter mile, braking 100-0, peak power estimate |
+| Battery test | resting, cranking and charging voltage with a verdict |
+| Code lookup | offline search of all fault codes by code or keyword |
+| Maintenance log | service history with odometer reminders |
+| Fuel cost | set price per litre in Settings; trip cost in Fuel consumption |
+| Terminal | in the developer console; only adapter commands and read-only OBD services are accepted |
+
+Not included: brand-specific ABS/airbag/transmission diagnostics, coding and service resets. These need each
+manufacturer's proprietary data and write to the car's computers.
+
 The raw ELM327 log (copy/share) is in Tools once **Settings → Developer console** is on.
 
 **Limits:** generic OBD2 reads the engine/emissions systems only. ABS, airbags and transmission usually need
@@ -65,7 +91,23 @@ gradlew.bat testDebugUnitTest
 echo "sdk.dir=$ANDROID_HOME" > local.properties
 ./gradlew assembleDebug testDebugUnitTest
 ```
-Output: `app/build/outputs/apk/debug/app-debug.apk`. Install with `adb install -r app/build/outputs/apk/debug/app-debug.apk`.
+Output: `app/build/outputs/apk/debug/app-debug.apk`.
+
+### Release build
+
+```sh
+./gradlew assembleRelease   # -> app/build/outputs/apk/release/app-release.apk
+```
+Signing is read from `keystore.properties` in the project root (git-ignored):
+```properties
+storeFile=keystore/diagnosepro-release.jks
+storePassword=...
+keyAlias=diagnosepro
+keyPassword=...
+```
+or from the environment variables `DP_STORE_FILE`, `DP_STORE_PASSWORD`, `DP_KEY_ALIAS`, `DP_KEY_PASSWORD`.
+Without them the release APK is built unsigned. **Back up the keystore and its passwords**: every future update
+must be signed with the same key, or it will not install over the existing app. Install with `adb install -r app/build/outputs/apk/debug/app-debug.apk`.
 
 ## Project layout
 

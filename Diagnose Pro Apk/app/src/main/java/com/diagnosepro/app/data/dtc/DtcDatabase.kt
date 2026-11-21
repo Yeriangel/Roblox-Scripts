@@ -68,6 +68,17 @@ class DtcLookup(private val db: DtcDbFile) {
         )
     }
 
+    /** Offline search by code prefix or by words in the description (current language). */
+    fun search(query: String, hebrew: Boolean, limit: Int = 60): List<DtcInfo> {
+        val q = query.trim()
+        if (q.length < 2) return emptyList()
+        val upper = q.uppercase()
+        val words = q.lowercase().split(Regex("\\s+")).filter { it.isNotEmpty() }
+        return db.codes.asSequence().filter { (code, e) ->
+            code.startsWith(upper) || (if (hebrew) e.he else e.en).lowercase().let { d -> words.all { d.contains(it) } }
+        }.sortedBy { it.key }.take(limit).map { lookup(it.key, hebrew) }.toList()
+    }
+
     companion object {
         fun parseSeverity(s: String?): Severity? = when (s?.lowercase()) {
             "low" -> Severity.LOW; "medium" -> Severity.MEDIUM; "high" -> Severity.HIGH; "stop" -> Severity.STOP

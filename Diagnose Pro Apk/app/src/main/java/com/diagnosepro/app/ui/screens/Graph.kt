@@ -50,7 +50,7 @@ import com.diagnosepro.app.ui.components.LineChart
 import com.diagnosepro.app.ui.components.LtrText
 import com.diagnosepro.app.ui.formatPid
 import com.diagnosepro.app.ui.pidName
-import com.diagnosepro.app.ui.pidNameRes
+import com.diagnosepro.app.ui.pidLabel
 import com.diagnosepro.app.util.Exporter
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -85,7 +85,7 @@ fun GraphScreen(vm: MainViewModel) {
         return
     }
 
-    val all = (Pids.all.filter { it.pid in supported }.map { it.key } + Pids.KEY_ADAPTER_VOLTAGE)
+    val all = Pids.allKeys().filter { k -> Pids.byKey(k)?.let { Pids.isAvailable(it, supported) } == true }
     val available = selected.filter { it in all } + all.filterNot { it in selected } // selected first
     val end = remember(tick, paused) { if (paused) pausedAt else System.currentTimeMillis() }
     val windowMs = WINDOWS_S[windowIdx] * 1000L
@@ -144,8 +144,8 @@ fun buildCsv(ctx: Context, series: Map<String, List<Pair<Long, Double>>>, units:
     val fmt = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.US)
     val header = listOf("time") + keys.map { k ->
         val def = Pids.byKey(k)
-        val u = def?.let { Units.unitLabel(it.quantity, units) }.orEmpty()
-        "\"" + ctx.getString(pidNameRes(k)) + (if (u.isNotEmpty()) " ($u)" else "") + "\""
+        val u = def?.let { it.customUnit ?: Units.unitLabel(it.quantity, units) }.orEmpty()
+        "\"" + pidLabel(ctx, k) + (if (u.isNotEmpty()) " ($u)" else "") + "\""
     }
     val times = series.values.flatten().map { it.first }.toSortedSet()
     val lookup = series.mapValues { (_, v) -> v.toMap() }

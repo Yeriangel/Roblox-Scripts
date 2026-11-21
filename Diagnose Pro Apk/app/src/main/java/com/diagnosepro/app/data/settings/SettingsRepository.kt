@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.diagnosepro.app.domain.AlertRule
 import com.diagnosepro.app.domain.EconomyUnit
 import com.diagnosepro.app.domain.PressureUnit
 import com.diagnosepro.app.domain.SpeedUnit
@@ -40,6 +41,11 @@ data class AppSettings(
     val activeVehicleId: Long? = null,
     val graphPids: List<String> = listOf("rpm", "speed"),
     val logPids: List<String> = listOf("rpm", "speed", "coolant_temp", "maf", "throttle", "engine_load"),
+    val alerts: List<AlertRule> = AlertRule.defaults,
+    val alertSound: Boolean = true,
+    /** Fuel price per litre, for trip cost. 0 = not set. */
+    val fuelPrice: Double = 0.0,
+    val currency: String = "₪",
 )
 
 @Singleton
@@ -62,6 +68,10 @@ class SettingsRepository @Inject constructor(@ApplicationContext private val con
         val vehicle = longPreferencesKey("active_vehicle")
         val graphPids = stringPreferencesKey("graph_pids")
         val logPids = stringPreferencesKey("log_pids")
+        val alerts = stringPreferencesKey("alerts")
+        val alertSound = booleanPreferencesKey("alert_sound")
+        val fuelPrice = stringPreferencesKey("fuel_price")
+        val currency = stringPreferencesKey("currency")
     }
 
     private inline fun <reified E : Enum<E>> Preferences.enum(key: Preferences.Key<String>, def: E): E =
@@ -88,6 +98,10 @@ class SettingsRepository @Inject constructor(@ApplicationContext private val con
                 activeVehicleId = p[K.vehicle],
                 graphPids = p[K.graphPids]?.split(',')?.filter { it.isNotBlank() } ?: d.graphPids,
                 logPids = p[K.logPids]?.split(',')?.filter { it.isNotBlank() } ?: d.logPids,
+                alerts = p[K.alerts]?.split(';')?.mapNotNull { AlertRule.decode(it) } ?: d.alerts,
+                alertSound = p[K.alertSound] ?: true,
+                fuelPrice = p[K.fuelPrice]?.toDoubleOrNull() ?: 0.0,
+                currency = p[K.currency] ?: d.currency,
             )
         }
 
@@ -108,6 +122,9 @@ class SettingsRepository @Inject constructor(@ApplicationContext private val con
     suspend fun setOnboardingDone() = edit { it[K.onboarding] = true }
     suspend fun setActiveVehicle(id: Long?) = edit { if (id == null) it.remove(K.vehicle) else it[K.vehicle] = id }
     suspend fun setGraphPids(keys: List<String>) = edit { it[K.graphPids] = keys.joinToString(",") }
+    suspend fun setAlerts(rules: List<AlertRule>) = edit { it[K.alerts] = rules.joinToString(";") { r -> r.encode() } }
+    suspend fun setAlertSound(v: Boolean) = edit { it[K.alertSound] = v }
+    suspend fun setFuelPrice(price: Double, currency: String) = edit { it[K.fuelPrice] = price.toString(); it[K.currency] = currency }
     suspend fun setLogPids(keys: List<String>) = edit { it[K.logPids] = keys.joinToString(",") }
     suspend fun setLastAdapter(a: LastAdapter?) = edit {
         if (a == null) { it.remove(K.lastAddr); it.remove(K.lastName); it.remove(K.lastType) }

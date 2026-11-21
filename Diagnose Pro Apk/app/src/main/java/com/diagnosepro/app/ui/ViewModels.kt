@@ -89,7 +89,14 @@ class MainViewModel @Inject constructor(
         if (obd.vehicle.value?.id == id) obd.selectVehicle(id)
     }
     fun deleteVehicle(id: Long) = viewModelScope.launch { vehicleRepo.delete(id) }
-    fun startLogging() = viewModelScope.launch { obd.startLogging(settingsRepo.current().logPids) }
+    fun setAlerts(rules: List<com.diagnosepro.app.domain.AlertRule>) = viewModelScope.launch { settingsRepo.setAlerts(rules) }
+    fun setAlertSound(v: Boolean) = viewModelScope.launch { settingsRepo.setAlertSound(v) }
+    fun setFuelPrice(price: Double, currency: String) = viewModelScope.launch { settingsRepo.setFuelPrice(price, currency) }
+    /** Records the gauges chosen for this vehicle plus the basics needed for the trip summary. */
+    fun startLogging() = viewModelScope.launch {
+        val gauges = obd.vehicle.value?.gauges?.split(',')?.filter { it.isNotBlank() }.orEmpty()
+        obd.startLogging((gauges + settingsRepo.current().logPids).distinct())
+    }
     fun stopLogging() = obd.stopLogging()
 }
 
@@ -150,6 +157,29 @@ class DiagnosticsViewModel @Inject constructor(private val obd: ObdManager) : Vi
     fun readFreezeFrame() = run { freezeFrame.value = obd.readFreezeFrame(); freezeRead.value = true }
     fun readVehicleInfo() = run { vehicleInfo.value = obd.readVehicleInfo() }
     fun readMode06() = run { mode06.value = obd.readMode06(); mode06Read.value = true }
+}
+
+@HiltViewModel
+class ExtrasViewModel @Inject constructor(private val repo: com.diagnosepro.app.data.ExtrasRepository, private val obd: ObdManager) : ViewModel() {
+    val customPids = repo.customPids.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+    val maintenance = repo.maintenance.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+    val terminalOutput = MutableStateFlow<String?>(null)
+
+    fun saveCustomPid(p: com.diagnosepro.app.data.db.CustomPidEntity) = viewModelScope.launch { repo.saveCustomPid(p) }
+    fun deleteCustomPid(id: Long) = viewModelScope.launch { repo.deleteCustomPid(id) }
+    fun addMaintenance(m: com.diagnosepro.app.data.db.MaintenanceEntity) = viewModelScope.launch { repo.addMaintenance(m) }
+    fun deleteMaintenance(id: Long) = viewModelScope.launch { repo.deleteMaintenance(id) }
+    val testSteps = MutableStateFlow<List<com.diagnosepro.app.domain.TestStep>?>(null)
+    val testProgress = MutableStateFlow<Pair<Int, Int>?>(null)
+    fun runSelfTest() {
+        if (testProgress.value != null) return
+        viewModelScope.launch {
+            testProgress.value = 0 to 1
+            try { testSteps.value = obd.runSelfTest { done, total -> testProgress.value = done to total } } finally { testProgress.value = null }
+        }
+    }
+    fun send(command: String) = viewModelScope.launch { obd.sendRaw(command) }
+    suspend fun voltage(): Double? = obd.readVoltage()
 }
 
 @HiltViewModel
