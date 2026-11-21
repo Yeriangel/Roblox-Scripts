@@ -594,4 +594,45 @@
     <string name="manual_address">כתובת בלוטות׳</string>
     <string name="try_ble">לנסות כ-Bluetooth LE</string>
     <string name="try_classic">לנסות כבלוטות׳ קלאסי</string>
+
+    <string name="status_elm">חיבור למתאם (ELM)</string>
+    <string name="status_ecu">חיבור למחשב הרכב (ECU)</string>
+    <string name="link_connected">מחובר</string>
+    <string name="link_disconnected">מנותק</string>
+
+    <string name="tool_fullscan">סריקת כל המערכות</string>
+    <string name="tool_fullscan_desc">איתור תקלות ב-ABS, כריות אוויר, גוף ומערכות נוספות</string>
+    <string name="fs_note">מחפש כל יחידת בקרה שעונה בקו האבחון של הרכב וקורא ממנה קודי תקלה. קריאה בלבד. הריצו כשהרכב חונה; זה לוקח בערך דקה, והנתונים החיים נעצרים בינתיים.</string>
+    <string name="fs_run">סריקת כל המערכות</string>
+    <string name="fs_running">סורק…</string>
+    <string name="fs_normal">תקין</string>
+    <string name="fs_current">נוכחי</string>
+    <string name="fs_no_dtc_service">אין רשימת תקלות</string>
+    <string name="fs_not_can">הסריקה הזו דורשת רכב CAN (רוב הרכבים משנת 2008).</string>
+    <string name="fs_none">אף יחידה לא ענתה. יש רכבים שמאפשרים למתאם גנרי לקרוא רק את מחשב המנוע.</string>
+    <string name="fs_limits">מגבלות: מתאם %1$s מגיע רק ליחידות שעל קו האבחון הראשי. יחידות על קווים אחרים דורשות כלי מקצועי. שמות היחידות הם הערכה, והקודים שלהן ייחודיים ליצרן, לכן השתמשו בחיפוש ברשת למשמעות המדויקת. פונקציות שירות (איפוסים, קידוד, התאמות) לא כלולות.</string>
+    <string name="mod_engine">מנוע (ECM)</string>
+    <string name="mod_transmission">תיבת הילוכים (TCM)</string>
+    <string name="mod_abs">בלמים (ABS / ESP)</string>
+    <string name="mod_steering">הגה כוח</string>
+    <string name="mod_suspension">מתלים</string>
+    <string name="mod_airbag">כריות אוויר (SRS)</string>
+    <string name="mod_cluster">לוח מחוונים</string>
+    <string name="mod_body">מערכות גוף (BCM)</string>
+    <string name="mod_hvac">בקרת אקלים</string>
+    <string name="mod_gateway">שער תקשורת (Gateway)</string>
+    <string name="mod_lighting">תאורה</string>
+    <string name="mod_entertainment">שמע / תקשורת</string>
+    <string name="mod_security">אבטחה / אימובילייזר</string>
+    <string name="mod_unknown">יחידת בקרה</string>
+
+    <string name="fs_details">פרטי היחידה</string>
+    <string name="fs_no_details">היחידה הזו לא מדווחת נתוני זיהוי.</string>
+    <string name="did_system">שם המערכת</string>
+    <string name="did_part">מספר חלק</string>
+    <string name="did_serial">מספר סידורי</string>
+    <string name="did_software">גרסת תוכנה</string>
+    <string name="did_hardware">גרסת חומרה</string>
+    <string name="custom_header">כתובת יחידה (לא חובה)</string>
+    <string name="custom_header_hint">כדי לקרוא יחידה שאינה המנוע, הזינו את הכתובת שלה מסריקת כל המערכות, למשל 7B0. השאירו ריק עבור המנוע.</string>
 </resources>

@@ -590,4 +590,45 @@
     <string name="manual_address">Bluetooth address</string>
     <string name="try_ble">Try as Bluetooth LE</string>
     <string name="try_classic">Try as Bluetooth Classic</string>
+
+    <string name="status_elm">Adapter (ELM) connection</string>
+    <string name="status_ecu">Car computer (ECU) connection</string>
+    <string name="link_connected">Connected</string>
+    <string name="link_disconnected">Disconnected</string>
+
+    <string name="tool_fullscan">Full system scan</string>
+    <string name="tool_fullscan_desc">Find faults in ABS, airbag, body and other modules</string>
+    <string name="fs_note">Searches for every control module that answers on the car\'s diagnostic bus and reads its fault codes. Read-only. Run it with the car parked; it takes about a minute and live data pauses meanwhile.</string>
+    <string name="fs_run">Scan all systems</string>
+    <string name="fs_running">Scanning…</string>
+    <string name="fs_normal">Normal</string>
+    <string name="fs_current">Current</string>
+    <string name="fs_no_dtc_service">No fault list</string>
+    <string name="fs_not_can">This scan needs a CAN car (most cars from 2008).</string>
+    <string name="fs_none">No module answered. Some cars only allow the engine computer to be read through a generic adapter.</string>
+    <string name="fs_limits">Limits: an %1$s adapter reaches only the modules on the main diagnostic bus. Modules on other buses need a professional multi-bus tool. Module names are a best guess, and codes of these modules are manufacturer-specific, so use the web search for their exact meaning. Service functions (resets, coding, adaptations) are not included.</string>
+    <string name="mod_engine">Engine (ECM)</string>
+    <string name="mod_transmission">Transmission (TCM)</string>
+    <string name="mod_abs">Brakes (ABS / ESP)</string>
+    <string name="mod_steering">Power steering</string>
+    <string name="mod_suspension">Suspension</string>
+    <string name="mod_airbag">Airbags (SRS)</string>
+    <string name="mod_cluster">Instrument cluster</string>
+    <string name="mod_body">Body electronics (BCM)</string>
+    <string name="mod_hvac">Climate control</string>
+    <string name="mod_gateway">Gateway</string>
+    <string name="mod_lighting">Lighting</string>
+    <string name="mod_entertainment">Audio / communication</string>
+    <string name="mod_security">Security / immobilizer</string>
+    <string name="mod_unknown">Control module</string>
+
+    <string name="fs_details">Module details</string>
+    <string name="fs_no_details">This module does not report identification data.</string>
+    <string name="did_system">System name</string>
+    <string name="did_part">Part number</string>
+    <string name="did_serial">Serial number</string>
+    <string name="did_software">Software version</string>
+    <string name="did_hardware">Hardware version</string>
+    <string name="custom_header">Module address (optional)</string>
+    <string name="custom_header_hint">To read a module other than the engine, enter its address from Full system scan, e.g. 7B0. Leave empty for the engine.</string>
 </resources>

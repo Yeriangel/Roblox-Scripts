@@ -63,6 +63,70 @@ class NewFeaturesTest {
         assertNotNull(v); assertTrue(v!! > 500)
     }
 
+    @Test fun udsDtcDecoding() {
+        // 59 02 FF | P0301-00 confirmed | C0035-13 pending | B1234-11 not failed (filtered out)
+        val r = Uds.decodeDtcs(intArrayOf(0x59, 0x02, 0xFF, 0x03, 0x01, 0x00, 0x09, 0x40, 0x35, 0x13, 0x04, 0x92, 0x34, 0x11, 0x50))!!
+        assertEquals(listOf("P0301", "C0035"), r.map { it.code })
+        assertTrue(r[0].current); assertFalse(r[1].current); assertEquals(0x13, r[1].failureType)
+        assertNull(Uds.decodeDtcs(intArrayOf(0x7F, 0x19, 0x11)))
+        assertTrue(Uds.decodeDtcs(intArrayOf(0x59, 0x02, 0xFF))!!.isEmpty())
+    }
+
+    @Test fun moduleNaming() {
+        assertEquals(ModuleKind.ABS, Uds.moduleKind("DA28F1", "28", true, null))        // SAE J2178
+        assertEquals(ModuleKind.AIRBAG, Uds.moduleKind("DA58F1", "58", true, "Honda"))
+        assertEquals(ModuleKind.ENGINE, Uds.moduleKind("7E0", "7E8", false, null))
+        assertEquals(ModuleKind.ABS, Uds.moduleKind("760", "768", false, "Ford"))
+        assertEquals(ModuleKind.UNKNOWN, Uds.moduleKind("760", "768", false, "Renault"))
+        assertEquals(255, Uds.probeTargets(true).size)
+        assertFalse("7DF" in Uds.probeTargets(false))
+    }
+
+    @Test fun fullSystemScanOnSimulatorIsReadOnlyAndRestoresAdapter() = runBlocking {
+        val sent = mutableListOf<String>()
+        val t = DemoTransport(latencyMs = 0); t.open()
+        val elm = Elm327(t, com.diagnosepro.app.elm327.RawLogger { d, text -> if (d == com.diagnosepro.app.elm327.RawLogger.Direction.TX) sent += text })
+        elm.initialize()
+        val obd = ObdService(elm)
+        val mods = obd.scanModules("Volkswagen") { _, _ -> }!!
+        assertEquals(setOf("7E0", "713", "715", "70E"), mods.map { it.requestId }.toSet())
+        assertEquals(ModuleKind.ABS, mods.first { it.requestId == "713" }.kind)
+        assertEquals(listOf("C0035"), mods.first { it.requestId == "713" }.dtcs!!.map { it.code })
+        assertTrue(mods.first { it.requestId == "715" }.dtcs!!.isEmpty())
+        // Only AT commands, 10 01 and 19 02 may have been sent during the scan
+        val obdCmds = sent.filterNot { it.startsWith("AT") || it.startsWith("retry") }
+        assertTrue(obdCmds.toString(), obdCmds.none { it.startsWith("04") || it.startsWith("14") || it.startsWith("2E") || it.startsWith("31") || it.startsWith("11") })
+        // Adapter restored: normal OBD reads work again and headers are off
+        assertFalse(elm.headersOn)
+        assertNotNull(obd.readPid(Pids.byKey("rpm")!!))
+    }
+
+    @Test fun moduleInfoAndModuleCustomPid() = runBlocking {
+        val t = DemoTransport(latencyMs = 0); t.open()
+        val elm = Elm327(t); elm.initialize()
+        val obd = ObdService(elm)
+        val info = obd.readModuleInfo("713")
+        assertEquals("ABS-ESP", info[0xF197])
+        assertEquals("WVWZZZ1KZ9W123456", info[0xF190])
+        assertFalse(info.containsKey(0xF18C)) // negative response is skipped
+        // custom PID aimed at the ABS module, then normal OBD must still work (address restored)
+        val def = CustomPid.toDef(9, "abs", "221234", "(A*256+B)/4", "rpm", 0.0, 1.0, "713")!!
+        assertEquals("713", def.customHeader)
+        assertTrue(obd.readPid(def)!! > 500)
+        assertNotNull(obd.readPid(Pids.byKey("speed")!!))
+        assertFalse(elm.headersOn)
+    }
+
+    @Test fun headerValidationAndPrintable() {
+        assertEquals("7B0", CustomPid.normalizeHeader("7b0"))
+        assertEquals("DA28F1", CustomPid.normalizeHeader("DA 28 F1"))
+        for (bad in listOf("8B0", "7B", "DA28F2", "XYZ")) assertNull(bad, CustomPid.normalizeHeader(bad))
+        assertTrue(CustomPid.isHeaderValid("")); assertFalse(CustomPid.isHeaderValid("zz"))
+        assertEquals("AB1", Uds.printable(intArrayOf(0x41, 0x42, 0x31, 0x00, 0x00)))
+        assertEquals("01 FE", Uds.printable(intArrayOf(0x01, 0xFE)))
+        assertNull(Uds.printable(intArrayOf(0xFF, 0xFF)))
+    }
+
     @Test fun terminalGuard() {
         for (ok in listOf("ATRV", "at dp", "0100", "03", "0902", "22F190", "ATH1")) assertTrue(ok, TerminalGuard.isAllowed(ok))
         for (bad in listOf("04", "0801", "2E F1 90 01", "3101FF00", "1003", "2701", "ATPP 0C SV 23", "AT@3 x", "ATSD01", "", "010", "XYZ"))

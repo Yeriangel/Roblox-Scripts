@@ -144,13 +144,19 @@ object CustomPid {
 
     fun key(id: Long) = "custom_$id"
 
-    fun toDef(id: Long, name: String, command: String, formula: String, unit: String, min: Double, max: Double): PidDef? {
+    private val headerRe = Regex("^([0-7][0-9A-F]{2}|DA[0-9A-F]{2}F1)$")
+
+    /** Module address for a custom PID: 11-bit id ("7B0") or 29-bit physical ("DA28F1"). Blank = default. */
+    fun normalizeHeader(h: String?): String? = h?.replace(" ", "")?.uppercase()?.takeIf { headerRe.matches(it) }
+    fun isHeaderValid(h: String) = h.isBlank() || normalizeHeader(h) != null
+
+    fun toDef(id: Long, name: String, command: String, formula: String, unit: String, min: Double, max: Double, header: String? = null): PidDef? {
         val cmd = normalizeCommand(command) ?: return null
         val expr = runCatching { Expression.parse(formula) }.getOrNull() ?: return null
         return PidDef(
             pid = -1000 - id.toInt(), key = key(id), bytes = expr.bytesNeeded, quantity = Quantity.RAW,
             gaugeMin = min, gaugeMax = max, priority = PollPriority.MEDIUM, decimals = 1,
-            customCommand = cmd, customName = name, customUnit = unit,
+            customCommand = cmd, customName = name, customUnit = unit, customHeader = normalizeHeader(header),
         ) { expr.eval(it) }
     }
 

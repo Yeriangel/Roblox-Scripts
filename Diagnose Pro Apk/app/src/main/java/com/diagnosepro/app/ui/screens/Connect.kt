@@ -74,6 +74,7 @@ fun ConnectScreen(vm: MainViewModel, onBack: () -> Unit) {
     val activity = ctx as? Activity
     val state by vm.obd.state.collectAsStateWithLifecycle()
     val settings by vm.settings.collectAsStateWithLifecycle()
+    val responding by vm.obd.vehicleResponding.collectAsStateWithLifecycle()
     val scanResults by vm.bluetooth.scanResults.collectAsStateWithLifecycle()
     val scanning by vm.bluetooth.scanning.collectAsStateWithLifecycle()
     // Re-read permission / adapter state after returning from system dialogs.
@@ -94,7 +95,7 @@ fun ConnectScreen(vm: MainViewModel, onBack: () -> Unit) {
     Scaffold(topBar = { BackTopBar(stringResource(R.string.connect_title), onBack) }) { pad ->
         LazyColumn(Modifier.fillMaxSize().padding(pad).padding(horizontal = 16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             item { DrivingWarning(vm) }
-            item { ConnectionStatusCard(state, onDisconnect = { vm.disconnect() }, onRetry = { settings?.lastAdapter?.let { connect(Target(it.address, it.name, it.type)) } }) }
+            item { ConnectionStatusCard(state, responding, onDisconnect = { vm.disconnect() }, onRetry = { settings?.lastAdapter?.let { connect(Target(it.address, it.name, it.type)) } }) }
 
             if (!vm.bluetooth.isSupported) {
                 // Emulators / phones without Bluetooth: only demo mode.
@@ -243,7 +244,15 @@ private fun ManualDialog(vm: MainViewModel, onDismiss: () -> Unit, onConnect: (T
 }
 
 @Composable
-private fun ConnectionStatusCard(state: ConnectionState, onDisconnect: () -> Unit, onRetry: () -> Unit) {
+private fun StatusLine(label: String, ok: Boolean) {
+    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        Text(label, Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium)
+        Text(stringResource(if (ok) R.string.link_connected else R.string.link_disconnected), color = if (ok) Ok else Danger, style = MaterialTheme.typography.labelLarge)
+    }
+}
+
+@Composable
+private fun ConnectionStatusCard(state: ConnectionState, responding: Boolean, onDisconnect: () -> Unit, onRetry: () -> Unit) {
     val ctx = LocalContext.current
     InfoCard {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -251,6 +260,12 @@ private fun ConnectionStatusCard(state: ConnectionState, onDisconnect: () -> Uni
             Text(stateText(ctx, state), style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f),
                 color = when (state) { is ConnectionState.Connected -> Ok; is ConnectionState.Error -> Danger; else -> MaterialTheme.colorScheme.onSurface })
         }
+        // Two separate links, as mechanics expect: phone ↔ adapter, and adapter ↔ car computer.
+        val elmOk = state is ConnectionState.Connected || (state is ConnectionState.Initializing)
+        val ecuOk = state is ConnectionState.Connected && responding
+        Spacer(Modifier.height(6.dp))
+        StatusLine(stringResource(R.string.status_elm), elmOk)
+        StatusLine(stringResource(R.string.status_ecu), ecuOk)
         when (state) {
             is ConnectionState.Connected -> {
                 Spacer(Modifier.height(8.dp))

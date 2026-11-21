@@ -28,6 +28,7 @@ class DemoTransport(
     private var headers = false
     private var spaces = true
     private var protocolSearched = false
+    private var txId = "7DF"
     private val start = clock()
     private val rnd = Random(42)
     private val pending = StringBuilder()
@@ -83,6 +84,14 @@ class DemoTransport(
         if (!protocolSearched) { protocolSearched = true; prefix = "SEARCHING...\r" }
         val mode = cmd.substring(0, 2).toInt(16)
         val pid = if (cmd.length >= 4) cmd.substring(2, 4).toInt(16) else -1
+        // UDS (full-system scan): four simulated modules answer on their own addresses.
+        if (mode == 0x10 || mode == 0x19 || (mode == 0x22 && cmd.startsWith("22F1"))) return prefix + uds(mode, cmd)
+        if (txId != "7DF" && txId != "7E0") {
+            // Custom PID aimed at one of the simulated modules: answer with the RPM word.
+            return prefix + if (mode == 0x22 && cmd.length >= 6 && txId in demoModules)
+                frame("%03X".format(txId.toInt(16) + 8), listOf(0x62, cmd.substring(2, 4).toInt(16), cmd.substring(4, 6).toInt(16)) + word((rpm() * 4).toInt()))
+            else "NO DATA"
+        }
         return prefix + when (mode) {
             0x01 -> mode01(pid)
             0x02 -> mode02(pid)
@@ -102,8 +111,29 @@ class DemoTransport(
         }
     }
 
+    private val demoModules = mapOf("7E0" to "ECM", "713" to "ABS-ESP", "715" to "AIRBAG", "70E" to "BODY-CTRL")
+
+    private fun uds(mode: Int, cmd: String): String {
+        if (mode == 0x22) {
+            val name = demoModules[txId] ?: return "NO DATA"
+            val did = cmd.substring(2, 6).toInt(16)
+            val text = when (did) { 0xF197 -> name; 0xF187 -> "1K0907${txId}A"; 0xF195 -> "0420"; 0xF190 -> "WVWZZZ1KZ9W123456"; else -> return "7F2231" }
+            return frame("%03X".format(txId.toInt(16) + 8), listOf(0x62, did shr 8, did and 0xFF) + text.map { it.code })
+        }
+        val dtcs: List<Int> = when (txId) {
+            "7E0" -> if (storedEngine.isEmpty()) emptyList() else listOf(0x03, 0x01, 0x00, 0x09)   // P0301-00 confirmed
+            "713" -> listOf(0x40, 0x35, 0x13, 0x09)                                                // C0035-13 confirmed
+            "715" -> emptyList()
+            "70E" -> listOf(0x92, 0x34, 0x11, 0x04)                                                // B1234-11 pending
+            else -> return "NO DATA"
+        }
+        val rx = "%03X".format(txId.toInt(16) + 8)
+        return if (mode == 0x10) frame(rx, listOf(0x50, 0x01, 0x00, 0x32, 0x01, 0xF4)) else frame(rx, listOf(0x59, 0x02, 0xFF) + dtcs)
+    }
+
     private fun handleAt(c: String): String = when {
-        c == "Z" -> { echo = true; headers = false; spaces = true; protocolSearched = false; "\r\rELM327 v2.2" }
+        c == "Z" -> { echo = true; headers = false; spaces = true; protocolSearched = false; txId = "7DF"; "\r\rELM327 v2.2" }
+        c.startsWith("SH") -> { txId = c.substring(2); "OK" }
         c == "WS" -> "\r\rELM327 v2.2"
         c == "I" -> "ELM327 v2.2"
         c == "@1" -> "OBDII to RS232 Interpreter"
@@ -117,8 +147,8 @@ class DemoTransport(
         c == "DPN" -> "A6"
         c == "DP" -> "AUTO, ISO 15765-4 (CAN 11/500)"
         c == "PPS" -> "00:FF F  01:FF F  02:FF F"
-        c.startsWith("SP") || c.startsWith("TP") || c.startsWith("ST") || c.startsWith("AT") ||
-            c.startsWith("L") || c.startsWith("M") || c == "D" || c.startsWith("CAF") || c.startsWith("SH") -> "OK"
+        c.startsWith("SP") || c.startsWith("TP") || c.startsWith("ST") || c.startsWith("AT") || c == "AR" || c.startsWith("CP") ||
+            c.startsWith("L") || c.startsWith("M") || c == "D" || c.startsWith("CAF") -> "OK"
         else -> "?"
     }
 

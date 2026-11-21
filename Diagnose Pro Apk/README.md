@@ -91,7 +91,20 @@ No adapter? Choose **Demo mode** to try every screen with a simulated car.
 | Fuel cost | set price per litre in Settings; trip cost in Fuel consumption |
 | Terminal | in the developer console; only adapter commands and read-only OBD services are accepted |
 
-Not included: brand-specific ABS/airbag/transmission diagnostics, coding and service resets. These need each
+**Added in 1.3:**
+
+| Feature | Notes |
+|---|---|
+| Full system scan | CAN cars. Finds every module that answers standard UDS on the OBD connector's bus (engine, ABS, airbag, body…) and reads its fault codes with status (current / pending). Read-only: sends only `10 01` and `19 02` |
+| Module details | Standard identification per module: system name, part number, serial, software/hardware version, VIN |
+| Module live data | A custom PID can target a module address found by the scan (e.g. `7B0`), so manufacturer data ids can be graphed and logged |
+| Adapter / ECU status | Separate "adapter connection" and "car computer connection" lines on the connection screen |
+
+Limits of the scan: an ELM327 is wired to one CAN bus, so modules on other buses (reached by multiplexing tools
+such as Launch) are not visible. Module names are a best guess (standardized only for 29-bit CAN), and the fault
+codes of these modules are manufacturer-specific.
+
+Not included: service functions (resets, adaptations, coding) and ready-made manufacturer live-data lists. These need each
 manufacturer's proprietary data and write to the car's computers.
 
 The raw ELM327 log (copy/share) is in Tools once **Settings → Developer console** is on.

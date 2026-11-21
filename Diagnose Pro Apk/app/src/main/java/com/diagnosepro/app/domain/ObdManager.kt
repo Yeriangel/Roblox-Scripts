@@ -14,6 +14,7 @@ import com.diagnosepro.app.elm327.Elm327
 import com.diagnosepro.app.elm327.ElmInitException
 import com.diagnosepro.app.elm327.ElmResult
 import com.diagnosepro.app.obd.CustomPid
+import com.diagnosepro.app.obd.ModuleResult
 import com.diagnosepro.app.obd.TerminalGuard
 import com.diagnosepro.app.elm327.InitStage
 import com.diagnosepro.app.elm327.ObdProtocol
@@ -111,7 +112,7 @@ class ObdManager @Inject constructor(
         // Keep user-defined PIDs registered so every screen can resolve them by key.
         scope.launch {
             extras.customPids.collect { list ->
-                Pids.setCustom(list.mapNotNull { CustomPid.toDef(it.id, it.name, it.command, it.formula, it.unit, it.minValue, it.maxValue) })
+                Pids.setCustom(list.mapNotNull { CustomPid.toDef(it.id, it.name, it.command, it.formula, it.unit, it.minValue, it.maxValue, it.header) })
             }
         }
         scope.launch { settings.settings.collect { alertRules = it.alerts; alertSound = it.alertSound } }
@@ -447,6 +448,12 @@ class ObdManager @Inject constructor(
     suspend fun readVehicleInfo(): VehicleInfo? = withObd { it.readVehicleInfo() }
     suspend fun readMode06(): List<ObdDecoders.Mode06Result>? = withObd { it.readMode06() }
     suspend fun readVoltage(): Double? = withObd { it.readVoltage() }
+
+    /** Full-system module scan; null when not connected or not a CAN car. */
+    suspend fun scanModules(progress: (Int, Int) -> Unit): List<ModuleResult>? =
+        withObd { it.scanModules(_vehicle.value?.manufacturer, progress) }
+
+    suspend fun readModuleInfo(target: String): Map<Int, String>? = withObd { it.readModuleInfo(target) }
 
     /** Read-only check of every read function against the connected car. */
     suspend fun runSelfTest(progress: (Int, Int) -> Unit): List<TestStep>? =
