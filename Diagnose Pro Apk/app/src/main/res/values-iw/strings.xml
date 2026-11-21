@@ -1,0 +1,449 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">דיאגנוז פרו</string>
+    <string name="demo_badge">הדגמה</string>
+
+    <!-- Navigation -->
+    <string name="nav_dashboard">לוח מחוונים</string>
+    <string name="nav_codes">קודי תקלה</string>
+    <string name="nav_graph">גרף חי</string>
+    <string name="nav_history">היסטוריה</string>
+    <string name="nav_settings">הגדרות</string>
+
+    <!-- Common -->
+    <string name="ok">אישור</string>
+    <string name="cancel">ביטול</string>
+    <string name="close">סגירה</string>
+    <string name="retry">לנסות שוב</string>
+    <string name="back">חזרה</string>
+    <string name="share">שיתוף</string>
+    <string name="delete">מחיקה</string>
+    <string name="save">שמירה</string>
+    <string name="connect">התחברות</string>
+    <string name="disconnect">ניתוק</string>
+    <string name="next">הבא</string>
+    <string name="skip">דילוג</string>
+    <string name="done">סיום</string>
+    <string name="copy">העתקה</string>
+    <string name="copied">הועתק</string>
+    <string name="loading">טוען…</string>
+    <string name="not_available">—</string>
+    <string name="search_web">חיפוש ברשת</string>
+    <string name="export_csv">ייצוא ל-CSV</string>
+    <string name="more">עוד</string>
+
+    <!-- Connection status -->
+    <string name="status_disconnected">לא מחובר</string>
+    <string name="status_connecting">מתחבר אל %1$s…</string>
+    <string name="status_init_resetting">מאתחל את המתאם…</string>
+    <string name="status_init_configuring">מגדיר את המתאם…</string>
+    <string name="status_searching_protocol">מחפש פרוטוקול תקשורת…</string>
+    <string name="status_reading_info">קורא נתוני רכב…</string>
+    <string name="status_connected">מחובר (%1$s)</string>
+    <string name="status_reconnecting">החיבור נותק, מתחבר מחדש (ניסיון %1$d) בעוד %2$d שנ׳…</string>
+    <string name="status_error">שגיאה: %1$s</string>
+    <string name="vehicle_not_responding">המתאם מחובר, אבל הרכב לא עונה. האם ההצתה דולקת?</string>
+
+    <string name="error_bluetooth_off">הבלוטות׳ כבוי</string>
+    <string name="error_permission">חסרה הרשאת בלוטות׳</string>
+    <string name="error_device_not_found">המתאם לא נמצא</string>
+    <string name="error_socket_failed">לא ניתן להתחבר למתאם</string>
+    <string name="error_no_obd_service">מכשיר הבלוטות׳ הזה אינו מתאם OBD</string>
+    <string name="error_timeout">המתאם לא ענה בזמן</string>
+    <string name="error_not_elm">המכשיר לא מגיב כמו מתאם ELM327</string>
+    <string name="error_no_vehicle">הרכב לא מגיב</string>
+    <string name="error_bus_error">שגיאת תקשורת עם מחשב הרכב</string>
+    <string name="error_link_lost">החיבור למתאם אבד</string>
+    <string name="error_unknown">שגיאה לא צפויה</string>
+    <string name="error_hint_bluetooth_off">הדליקו את הבלוטות׳ ונסו שוב.</string>
+    <string name="error_hint_permission">אשרו את הרשאת הבלוטות׳ כדי שהאפליקציה תוכל לדבר עם המתאם.</string>
+    <string name="error_hint_device_not_found">ודאו שהמתאם מחובר לשקע ומצומד בהגדרות הבלוטות׳ של הטלפון.</string>
+    <string name="error_hint_socket_failed">ודאו שהמתאם מחובר לשקע ושהנורית שלו דולקת. סגרו אפליקציות OBD אחרות שאולי משתמשות בו, ונסו שוב.</string>
+    <string name="error_hint_no_obd_service">בחרו את מתאם ה-OBD מהרשימה (שמות כמו OBDII,‏ ELM327,‏ V-LINK).</string>
+    <string name="error_hint_timeout">נתקו את המתאם ל-10 שניות, חברו אותו שוב ונסו שוב.</string>
+    <string name="error_hint_not_elm">בחרו מכשיר אחר מהרשימה, או נתקו וחברו מחדש את המתאם.</string>
+    <string name="error_hint_no_vehicle">העבירו את ההצתה למצב ON (או התניעו) ונסו שוב. רכבים ישנים מאוד (לפני 2001 באירופה / 1996 בארה״ב) לא תמיד תומכים ב-OBD2.</string>
+    <string name="error_hint_bus_error">כבו את ההצתה והדליקו שוב, ואז התחברו מחדש. אם זה חוזר, ייתכן שהמתאם לא תומך בפרוטוקול של הרכב.</string>
+    <string name="error_hint_link_lost">ודאו שהמתאם עדיין מחובר ושהטלפון קרוב לרכב.</string>
+    <string name="error_hint_unknown">נסו שוב. אם זה חוזר, הפעילו את קונסולת המפתחים בהגדרות כדי לראות פרטים.</string>
+
+    <string name="clone_warning_title">ייתכן שהמתאם הוא חיקוי</string>
+    <string name="clone_warning_text">המתאם שלכם נראה כמו חיקוי זול של ELM327 (%1$s). רוב התכונות בדרך כלל עובדות, אבל הקריאה עלולה להיות איטית יותר וחלק מהפקודות עלולות להיכשל.</string>
+
+    <!-- Onboarding -->
+    <string name="onb_title_1">חברו את המתאם</string>
+    <string name="onb_text_1">מצאו את שקע ה-OBD2 מתחת להגה (ליד הדוושות) וחברו אליו את מתאם ה-ELM327. אחר כך העבירו את ההצתה למצב ON או התניעו את המנוע.</string>
+    <string name="onb_title_2">צמדו אותו לטלפון</string>
+    <string name="onb_text_2">פתחו את הגדרות הבלוטות׳ בטלפון וצמדו את המתאם. השם שלו בדרך כלל OBDII,‏ ELM327 או V-LINK. הקוד הנפוץ הוא 1234 או 0000. (מתאמי BLE לא צריכים צימוד.)</string>
+    <string name="onb_title_3">התחברו באפליקציה</string>
+    <string name="onb_text_3">הקישו על מצב החיבור בראש המסך, בחרו את המתאם וזהו. עוד אין לכם מתאם? נסו את מצב ההדגמה כדי להכיר את כל המסכים.</string>
+    <string name="onb_get_started">בואו נתחיל</string>
+    <string name="limits_note">OBD2 גנרי קורא את מערכות המנוע והפליטה. מערכות ABS, כריות אוויר ותיבת הילוכים דורשות בדרך כלל כלים ייעודיים ליצרן.</string>
+
+    <!-- Permissions / Bluetooth -->
+    <string name="perm_title">גישה לבלוטות׳</string>
+    <string name="perm_text">דיאגנוז פרו משתמשת בבלוטות׳ רק כדי לדבר עם מתאם ה-OBD. האפליקציה לא משתמשת במיקום שלכם ולא שולחת שום מידע לאינטרנט.</string>
+    <string name="perm_text_legacy">בגרסת אנדרואיד הזו, חיפוש מכשירי בלוטות׳ דורש הרשאת מיקום. האפליקציה לא משתמשת במיקום ולא שומרת אותו.</string>
+    <string name="perm_grant">אישור</string>
+    <string name="perm_denied_forever">ההרשאה נדחתה. פתחו את הגדרות האפליקציה ואשרו \"מכשירים בקרבת מקום\" (או מיקום בטלפונים ישנים).</string>
+    <string name="perm_open_settings">פתיחת הגדרות האפליקציה</string>
+    <string name="bt_off_title">הבלוטות׳ כבוי</string>
+    <string name="bt_off_text">הדליקו את הבלוטות׳ כדי להתחבר למתאם.</string>
+    <string name="bt_turn_on">הדלקת בלוטות׳</string>
+
+    <!-- Device picker -->
+    <string name="connect_title">חיבור מתאם</string>
+    <string name="paired_devices">מכשירים מצומדים</string>
+    <string name="found_devices">מכשירים בסביבה</string>
+    <string name="scan">חיפוש</string>
+    <string name="scanning">מחפש…</string>
+    <string name="no_paired">אין מכשירים מצומדים. צמדו את המתאם בהגדרות הבלוטות׳ של הטלפון, או הקישו על חיפוש.</string>
+    <string name="no_found">עדיין לא נמצא כלום. ודאו שהמתאם מחובר ושההצתה דולקת.</string>
+    <string name="likely_obd">מתאם OBD</string>
+    <string name="demo_mode">מצב הדגמה</string>
+    <string name="demo_mode_desc">רכב מדומה עם נתונים חיים וקודי תקלה לדוגמה. לא צריך מתאם.</string>
+    <string name="type_classic">בלוטות׳ קלאסי</string>
+    <string name="type_ble">Bluetooth LE</string>
+    <string name="open_bt_settings">הגדרות בלוטות׳</string>
+    <string name="last_adapter">בשימוש אחרון</string>
+
+    <!-- Dashboard -->
+    <string name="dash_not_connected_title">לא מחובר</string>
+    <string name="dash_not_connected_text">חברו את המתאם, הדליקו את ההצתה והתחברו. או נסו את מצב ההדגמה.</string>
+    <string name="dash_customize">בחירת מדים</string>
+    <string name="dash_no_gauges">לא נבחרו מדים. הקישו על \"בחירת מדים\".</string>
+    <string name="dash_unsupported_hidden">%1$d מדים מוסתרים כי הרכב שלכם לא תומך בהם.</string>
+    <string name="dash_tools">כלים</string>
+    <string name="driving_warning">אל תשתמשו באפליקציה בזמן נהיגה. עצרו בצד קודם.</string>
+    <string name="logging_start">הקלטת נסיעה</string>
+    <string name="logging_stop">עצירת הקלטה</string>
+    <string name="logging_active">מקליט · %1$s</string>
+    <string name="vehicle_label">רכב: %1$s</string>
+    <string name="waiting_data">ממתין לנתונים…</string>
+
+    <!-- PID names -->
+    <string name="pid_engine_load">עומס מנוע</string>
+    <string name="pid_coolant_temp">טמפ׳ נוזל קירור</string>
+    <string name="pid_stft_b1">תיקון דלק קצר B1</string>
+    <string name="pid_ltft_b1">תיקון דלק ארוך B1</string>
+    <string name="pid_stft_b2">תיקון דלק קצר B2</string>
+    <string name="pid_ltft_b2">תיקון דלק ארוך B2</string>
+    <string name="pid_fuel_pressure">לחץ דלק</string>
+    <string name="pid_map">לחץ סעפת יניקה (MAP)</string>
+    <string name="pid_rpm">סל״ד מנוע</string>
+    <string name="pid_speed">מהירות</string>
+    <string name="pid_timing_advance">הקדמת הצתה</string>
+    <string name="pid_intake_temp">טמפ׳ אוויר יניקה</string>
+    <string name="pid_maf">זרימת אוויר (MAF)</string>
+    <string name="pid_throttle">מצערת</string>
+    <string name="pid_o2_b1s1">חיישן חמצן B1 S1</string>
+    <string name="pid_o2_b1s2">חיישן חמצן B1 S2</string>
+    <string name="pid_o2_b1s3">חיישן חמצן B1 S3</string>
+    <string name="pid_o2_b1s4">חיישן חמצן B1 S4</string>
+    <string name="pid_o2_b2s1">חיישן חמצן B2 S1</string>
+    <string name="pid_o2_b2s2">חיישן חמצן B2 S2</string>
+    <string name="pid_o2_b2s3">חיישן חמצן B2 S3</string>
+    <string name="pid_o2_b2s4">חיישן חמצן B2 S4</string>
+    <string name="pid_run_time">זמן מאז ההתנעה</string>
+    <string name="pid_distance_mil">מרחק עם נורית דולקת</string>
+    <string name="pid_fuel_level">מפלס דלק</string>
+    <string name="pid_distance_cleared">מרחק מאז מחיקת קודים</string>
+    <string name="pid_baro">לחץ ברומטרי</string>
+    <string name="pid_module_voltage">מתח מחשב הרכב</string>
+    <string name="pid_ambient_temp">טמפ׳ חוץ</string>
+    <string name="pid_oil_temp">טמפ׳ שמן</string>
+    <string name="pid_fuel_rate">צריכת דלק לשעה</string>
+    <string name="pid_odometer">מד מרחק (קילומטראז׳)</string>
+    <string name="pid_adapter_voltage">מתח מצבר</string>
+
+    <!-- Gauge config -->
+    <string name="gauges_title">בחירת מדים</string>
+    <string name="gauges_hint">הפעילו או כבו מדים והשתמשו בחיצים כדי לשנות את הסדר. נשמר עבור הרכב הזה.</string>
+    <string name="move_up">הזזה למעלה</string>
+    <string name="move_down">הזזה למטה</string>
+    <string name="gauges_reset">איפוס לברירת מחדל</string>
+    <string name="not_supported_by_car">הרכב לא תומך בזה</string>
+
+    <!-- Codes -->
+    <string name="codes_title">קודי תקלה</string>
+    <string name="codes_read">קריאת קודים</string>
+    <string name="codes_reading">קורא קודים…</string>
+    <string name="codes_mil_on">נורית Check Engine: דולקת</string>
+    <string name="codes_mil_off">נורית Check Engine: כבויה</string>
+    <plurals name="codes_found">
+        <item quantity="one">נמצא קוד אחד</item>
+        <item quantity="two">נמצאו %1$d קודים</item>
+        <item quantity="many">נמצאו %1$d קודים</item>
+        <item quantity="other">נמצאו %1$d קודים</item>
+    </plurals>
+    <string name="codes_none_title">אין קודי תקלה</string>
+    <string name="codes_none_text">הרכב לא מדווח על קודים שמורים, ממתינים או קבועים.</string>
+    <string name="codes_not_read_title">מוכן לסריקה</string>
+    <string name="codes_not_read_text">הקישו על \"קריאת קודים\" כדי לבדוק אם יש קודי תקלה במחשב המנוע.</string>
+    <string name="codes_stored">שמורים</string>
+    <string name="codes_pending">ממתינים</string>
+    <string name="codes_permanent">קבועים</string>
+    <string name="codes_stored_desc">תקלות מאומתות. הן מדליקות את נורית Check Engine.</string>
+    <string name="codes_pending_desc">זוהו פעם אחת; יהפכו לשמורים אם התקלה תחזור.</string>
+    <string name="codes_permanent_desc">אי אפשר למחוק אותם. הם נמחקים לבד אחרי שהרכב מאמת שהתיקון הצליח.</string>
+    <string name="codes_kind_failed">לא ניתן לקרוא קודים מסוג %1$s (%2$s)</string>
+    <string name="codes_clear">מחיקת קודים</string>
+    <string name="codes_need_connection">התחברו לרכב כדי לקרוא קודי תקלה.</string>
+    <string name="ecu_engine">מנוע (%1$s)</string>
+    <string name="ecu_transmission">תיבת הילוכים (%1$s)</string>
+    <string name="ecu_abs">ABS ‏(%1$s)</string>
+    <string name="ecu_other">יחידת בקרה %1$s</string>
+    <string name="codes_share_report">שיתוף דוח</string>
+    <string name="share_as_text">שיתוף כטקסט</string>
+    <string name="share_as_pdf">שיתוף כ-PDF</string>
+
+    <!-- Clear codes -->
+    <string name="clear_title">למחוק את קודי התקלה?</string>
+    <string name="clear_text_engine">• המנוע צריך להיות כבוי וההצתה במצב ON (בחלק מהרכבים צריך מנוע בסרק).</string>
+    <string name="clear_text_not_fix">• המחיקה לא מתקנת את התקלה. אם התקלה עדיין קיימת, הקוד והנורית יחזרו — לפעמים אחרי כמה דקות ולפעמים אחרי כמה נסיעות.</string>
+    <string name="clear_text_monitors">• המחיקה מאפסת גם את בדיקות המוכנות ואת נתוני ה-Freeze Frame. הרכב עלול להיכשל בטסט עד שייסע מספיק כדי שהבדיקות יהיו מוכנות שוב.</string>
+    <string name="clear_text_saved">הקודים הנוכחיים יישמרו קודם בהיסטוריה.</string>
+    <string name="clear_continue">המשך</string>
+    <string name="clear_confirm_title">אישור אחרון</string>
+    <string name="clear_confirm_text">לשלוח עכשיו לרכב את פקודת המחיקה (Mode 04)?</string>
+    <string name="clear_confirm_button">הבנתי, למחוק קודים</string>
+    <string name="clear_in_progress">מוחק קודים…</string>
+    <string name="clear_success">הקודים נמחקו, נורית Check Engine כבויה.</string>
+    <string name="clear_came_back">חלק מהקודים חזרו מיד: התקלה עדיין פעילה.</string>
+    <string name="clear_failed">הרכב לא קיבל את פקודת המחיקה (%1$s). ודאו שההצתה במצב ON והמנוע כבוי, ונסו שוב.</string>
+    <string name="clear_permanent_remain">קודים קבועים נשארים עד שהרכב מאשר את התיקון. זה תקין.</string>
+    <string name="clear_not_connected">לא מחובר</string>
+
+    <!-- Code detail -->
+    <string name="detail_description">תיאור</string>
+    <string name="detail_causes">סיבות אפשריות</string>
+    <string name="detail_tip">מה לבדוק</string>
+    <string name="detail_severity">חומרה</string>
+    <string name="sev_low">נמוכה</string>
+    <string name="sev_medium">בינונית</string>
+    <string name="sev_high">גבוהה</string>
+    <string name="sev_stop">להפסיק לנסוע</string>
+    <string name="sev_low_desc">תקלה קלה או של פליטה בלבד. לטפל כשנוח.</string>
+    <string name="sev_medium_desc">כדאי לקבוע תיקון בקרוב.</string>
+    <string name="sev_high_desc">לתקן בהקדם כדי למנוע נזק.</string>
+    <string name="sev_stop_desc">עצרו כשבטוח ותנו לבדוק את הרכב. המשך נסיעה עלול לגרום נזק למנוע או להיות מסוכן.</string>
+    <string name="detail_manufacturer">קוד ייחודי ליצרן</string>
+    <string name="detail_manufacturer_text">את הקוד הזה מגדיר יצרן הרכב, ולכן המשמעות המדויקת שלו שונה בין מותגים. חפשו ברשת יחד עם דגם הרכב, או שאלו במוסך מורשה.</string>
+    <string name="detail_unknown_generic">הקוד הגנרי הזה לא נמצא במאגר הלא-מקוון. הקבוצה שלו:</string>
+    <string name="detail_reported_by">דווח על ידי: %1$s</string>
+    <string name="detail_kind">סוג: %1$s</string>
+    <string name="detail_no_details">אין פרטים נוספים לקוד הזה. חפשו ברשת למידע נוסף.</string>
+
+    <!-- Freeze frame -->
+    <string name="ff_title">Freeze Frame (תמונת מצב)</string>
+    <string name="ff_desc">תמונת מצב של נתוני המנוע שנשמרה ברגע שהתקלה זוהתה.</string>
+    <string name="ff_caused_by">נשמר עבור הקוד %1$s</string>
+    <string name="ff_none">אין תמונת מצב שמורה. היא נמחקת כשמוחקים קודים.</string>
+    <string name="ff_read">קריאת תמונת מצב</string>
+
+    <!-- Readiness -->
+    <string name="rd_title">בדיקות מוכנות</string>
+    <string name="rd_desc">בדיקות עצמיות שהרכב מריץ בזמן נסיעה. בטסט בודקים אותן.</string>
+    <string name="rd_ready">מוכן</string>
+    <string name="rd_not_ready">לא מוכן</string>
+    <string name="rd_not_supported">לא נתמך</string>
+    <string name="rd_summary_ready">מוכן לטסט</string>
+    <plurals name="rd_summary_not_ready">
+        <item quantity="one">עדיין לא מוכן: בדיקה אחת לא הושלמה. צריך לנסוע עוד.</item>
+        <item quantity="two">עדיין לא מוכן: %1$d בדיקות לא הושלמו. צריך לנסוע עוד.</item>
+        <item quantity="many">עדיין לא מוכן: %1$d בדיקות לא הושלמו. צריך לנסוע עוד.</item>
+        <item quantity="other">עדיין לא מוכן: %1$d בדיקות לא הושלמו. צריך לנסוע עוד.</item>
+    </plurals>
+    <string name="rd_drive_tip">שילוב של נסיעה עירונית ובין-עירונית במשך כמה ימים בדרך כלל משלים את הבדיקות. בדיקת ה-EVAP צריכה לרוב התנעה קרה ומיכל דלק בין רבע לשלושה רבעים.</string>
+    <string name="rd_since_clear">מאז מחיקת הקודים</string>
+    <string name="rd_this_cycle">בנסיעה הנוכחית</string>
+    <string name="rd_read">קריאת בדיקות</string>
+    <string name="rd_diesel">מנוע דיזל</string>
+    <string name="rd_mil_on_warning">נורית Check Engine דולקת: בדרך כלל הרכב ייכשל בטסט עד שהתקלה תתוקן.</string>
+    <string name="mon_misfire">תקלות הצתה</string>
+    <string name="mon_fuel_system">מערכת הדלק</string>
+    <string name="mon_components">רכיבים כלליים</string>
+    <string name="mon_catalyst">ממיר קטליטי</string>
+    <string name="mon_heated_catalyst">ממיר קטליטי מחומם</string>
+    <string name="mon_evap">מערכת אדי דלק (EVAP)</string>
+    <string name="mon_secondary_air">אוויר משני</string>
+    <string name="mon_ac_refrigerant">גז מזגן</string>
+    <string name="mon_o2_sensor">חיישן חמצן</string>
+    <string name="mon_o2_heater">גוף חימום חיישן חמצן</string>
+    <string name="mon_egr">מערכת EGR</string>
+    <string name="mon_nmhc_catalyst">ממיר NMHC</string>
+    <string name="mon_nox_scr">NOx / SCR</string>
+    <string name="mon_boost_pressure">לחץ טורבו</string>
+    <string name="mon_exhaust_sensor">חיישן גזי פליטה</string>
+    <string name="mon_pm_filter">מסנן חלקיקים (DPF)</string>
+    <string name="mon_egr_vvt">EGR / VVT</string>
+
+    <!-- Vehicle info -->
+    <string name="vi_title">פרטי רכב</string>
+    <string name="vi_read">קריאת פרטי רכב</string>
+    <string name="vi_vin">מספר שלדה (VIN)</string>
+    <string name="vi_manufacturer">יצרן</string>
+    <string name="vi_model_year">שנת דגם</string>
+    <string name="vi_country">מדינה / אזור</string>
+    <string name="vi_check_digit">ספרת ביקורת</string>
+    <string name="vi_check_ok">תקינה</string>
+    <string name="vi_check_bad">לא תואמת (נפוץ ברכבים שלא יוצרו לארה״ב)</string>
+    <string name="vi_cal_ids">מזהי כיול</string>
+    <string name="vi_cvn">אימות כיול (CVN)</string>
+    <string name="vi_ecu_name">שם יחידת הבקרה</string>
+    <string name="vi_no_vin">הרכב לא דיווח מספר שלדה (נפוץ ברכבים מלפני 2005 בערך).</string>
+    <string name="vi_saved_vehicles">רכבים שמורים</string>
+    <string name="vi_active">פעיל</string>
+    <string name="vi_rename">שינוי שם</string>
+    <string name="vi_name">שם</string>
+    <string name="vi_no_vehicles">עדיין אין רכבים שמורים. רכבים נשמרים אוטומטית כשמתחברים.</string>
+    <string name="country_us">ארצות הברית</string>
+    <string name="country_ca">קנדה</string>
+    <string name="country_mx">מקסיקו</string>
+    <string name="country_na">צפון אמריקה</string>
+    <string name="country_au">אוסטרליה</string>
+    <string name="country_nz">ניו זילנד</string>
+    <string name="country_sa">דרום אמריקה</string>
+    <string name="country_br">ברזיל</string>
+    <string name="country_jp">יפן</string>
+    <string name="country_kr">דרום קוריאה</string>
+    <string name="country_cn">סין</string>
+    <string name="country_in">הודו</string>
+    <string name="country_th">תאילנד</string>
+    <string name="country_tr">טורקיה</string>
+    <string name="country_asia">אסיה</string>
+    <string name="country_uk">בריטניה</string>
+    <string name="country_de">גרמניה</string>
+    <string name="country_cz">צ׳כיה</string>
+    <string name="country_ch">שווייץ</string>
+    <string name="country_ro">רומניה</string>
+    <string name="country_fr">צרפת</string>
+    <string name="country_es">ספרד</string>
+    <string name="country_ru">רוסיה</string>
+    <string name="country_se">שוודיה</string>
+    <string name="country_be">בלגיה</string>
+    <string name="country_it">איטליה</string>
+    <string name="country_za">דרום אפריקה</string>
+    <string name="country_eu">אירופה</string>
+    <string name="country_unknown">לא ידוע</string>
+
+    <!-- Live graph -->
+    <string name="graph_select">בחרו עד 4 ערכים</string>
+    <string name="graph_pause">השהיה</string>
+    <string name="graph_resume">המשך</string>
+    <string name="graph_zoom_in">הגדלה</string>
+    <string name="graph_zoom_out">הקטנה</string>
+    <string name="graph_window">%1$d השניות האחרונות</string>
+    <string name="graph_no_selection">בחרו לפחות ערך אחד להצגה בגרף.</string>
+    <string name="graph_need_connection">התחברו לרכב כדי לראות גרפים חיים. אפשר לצפות שוב בנסיעות מוקלטות דרך ההיסטוריה.</string>
+
+    <!-- History -->
+    <string name="hist_scans">סריקות קודים</string>
+    <string name="hist_sessions">נסיעות</string>
+    <string name="hist_empty_scans">עדיין אין סריקות. בכל פעם שקוראים קודים, התוצאה נשמרת כאן כדי שתוכלו להשוות לאורך זמן.</string>
+    <string name="hist_empty_sessions">אין נסיעות מוקלטות. הקישו על \"הקלטת נסיעה\" בלוח המחוונים כדי לתעד נתונים.</string>
+    <string name="hist_before_clear">נשמר לפני מחיקה</string>
+    <string name="hist_mileage">קילומטראז׳: %1$s</string>
+    <string name="hist_no_codes">אין קודים</string>
+    <string name="scan_title">פרטי סריקה</string>
+    <string name="session_title">נסיעה</string>
+    <string name="session_duration">משך</string>
+    <string name="session_distance">מרחק</string>
+    <string name="session_max_speed">מהירות מרבית</string>
+    <string name="session_avg_rpm">סל״ד ממוצע</string>
+    <string name="session_max_coolant">טמפ׳ קירור מרבית</string>
+    <string name="session_in_progress">הקלטה מתבצעת</string>
+    <string name="delete_confirm">למחוק את הפריט?</string>
+    <string name="session_no_samples">אין נתונים מוקלטים בנסיעה הזו.</string>
+
+    <!-- Tools -->
+    <string name="tools_title">כלים</string>
+    <string name="tool_readiness_desc">האם הרכב מוכן לטסט השנתי?</string>
+    <string name="tool_freeze_desc">תמונת מצב של הנתונים מרגע התקלה</string>
+    <string name="tool_vehicle_desc">מספר שלדה, שנת דגם, פרטי יחידות בקרה ורכבים שמורים</string>
+    <string name="tool_mode06">תוצאות בדיקות (Mode 06)</string>
+    <string name="tool_mode06_desc">התוצאות הגולמיות של הבדיקות העצמיות של הרכב</string>
+    <string name="tool_fuel">צריכת דלק</string>
+    <string name="tool_fuel_desc">הערכה לפי זרימת אוויר ומהירות</string>
+    <string name="tool_accel">מדידת 0-100 קמ״ש</string>
+    <string name="tool_accel_mph">מדידת 0-60 מייל</string>
+    <string name="tool_accel_desc">מדידת תאוצה לפי המהירות החיה</string>
+    <string name="tool_console">קונסולת מפתחים</string>
+    <string name="tool_console_desc">פקודות ותשובות גולמיות של המתאם</string>
+
+    <string name="m06_not_supported">תוצאות Mode 06 זמינות רק ברכבי CAN (רוב הרכבים משנת 2008).</string>
+    <string name="m06_none">הרכב לא דיווח על תוצאות בדיקות.</string>
+    <string name="m06_read">קריאת תוצאות</string>
+    <string name="m06_pass">עבר</string>
+    <string name="m06_fail">נכשל</string>
+    <string name="m06_test">בדיקה %1$s · מבחן %2$s</string>
+    <string name="m06_limits">גבולות: %1$s – %2$s</string>
+
+    <string name="fuel_estimate_note">הערכה בלבד. מחושב לפי זרימת האוויר (MAF) והמהירות, עבור מנוע בנזין. הצריכה בפועל יכולה להיות שונה, במיוחד במנועי דיזל וטורבו.</string>
+    <string name="fuel_instant">רגעי</string>
+    <string name="fuel_average">ממוצע נסיעה</string>
+    <string name="fuel_rate_label">זרימת דלק</string>
+    <string name="fuel_stopped">עומד</string>
+    <string name="fuel_need_maf">הרכב לא מדווח זרימת אוויר (MAF), לכן אי אפשר להעריך צריכה.</string>
+    <string name="fuel_reset">איפוס ממוצע</string>
+
+    <string name="accel_text">עצרו את הרכב לגמרי, הקישו על דריכה ואז האיצו. המדידה מתחילה כשהרכב זז ונעצרת במהירות היעד. רק בכביש סגור או במסלול, ולפי החוק.</string>
+    <string name="accel_arm">דריכה</string>
+    <string name="accel_armed">דרוך — ממתין שהרכב יזוז</string>
+    <string name="accel_need_stop">עצרו את הרכב כדי לדרוך את המדידה.</string>
+    <string name="accel_running">מודד…</string>
+    <string name="accel_result">תוצאה</string>
+    <string name="accel_best">הטוב ביותר: %1$s</string>
+    <string name="accel_reset">איפוס</string>
+    <string name="accel_note">הדיוק מוגבל בקצב שבו הרכב מדווח מהירות (בערך 0.1–0.3 שנ׳).</string>
+
+    <string name="console_clear">ניקוי</string>
+    <string name="console_empty">עדיין אין תעבורה.</string>
+
+    <!-- Settings -->
+    <string name="set_language">שפה</string>
+    <string name="lang_system">לפי המכשיר</string>
+    <string name="lang_hebrew">עברית</string>
+    <string name="lang_english">English</string>
+    <string name="set_units">יחידות מידה</string>
+    <string name="set_speed_unit">מהירות ומרחק</string>
+    <string name="set_temp_unit">טמפרטורה</string>
+    <string name="set_pressure_unit">לחץ</string>
+    <string name="set_economy_unit">צריכת דלק</string>
+    <string name="set_polling">קצב קריאה</string>
+    <string name="polling_fast">מהיר</string>
+    <string name="polling_normal">רגיל</string>
+    <string name="polling_slow">איטי</string>
+    <string name="polling_hint">אם הנתונים קופצים או נקטעים (נפוץ במתאמי חיקוי), בחרו \"איטי\".</string>
+    <string name="set_connection">חיבור</string>
+    <string name="set_auto_connect">התחברות אוטומטית בפתיחה</string>
+    <string name="set_auto_connect_desc">להתחבר למתאם האחרון כשהאפליקציה נפתחת.</string>
+    <string name="set_keep_screen">להשאיר את המסך דולק בזמן חיבור</string>
+    <string name="set_forget_adapter">שכח את המתאם האחרון</string>
+    <string name="set_appearance">תצוגה</string>
+    <string name="set_theme">ערכת נושא</string>
+    <string name="theme_dark">כהה</string>
+    <string name="theme_light">בהירה</string>
+    <string name="theme_system">לפי הגדרות המכשיר</string>
+    <string name="set_advanced">מתקדם</string>
+    <string name="set_dev_console">קונסולת מפתחים</string>
+    <string name="set_dev_console_desc">הצגת התעבורה הגולמית של המתאם במסך הכלים.</string>
+    <string name="set_about">אודות</string>
+    <string name="set_vehicles">רכבים שמורים</string>
+    <string name="set_onboarding">הצגת מדריך ההתחלה שוב</string>
+
+    <string name="about_version">גרסה %1$s</string>
+    <string name="about_text">אבחון OBD2 בחינם. בלי מנוי, בלי פרסומות, בלי חשבון ובלי חיבור לאינטרנט. כל הנתונים נשארים בטלפון שלכם.</string>
+    <string name="about_limits_title">מה OBD2 גנרי יכול לעשות</string>
+    <string name="about_safety">האפליקציה רק קוראת נתונים. הפקודה היחידה שמשנה משהו ברכב היא \"מחיקת קודים\" (Mode 04), והיא תמיד מבקשת אישור כפול. האפליקציה אף פעם לא כותבת, מקודדת או משנה את מחשבי הרכב.</string>
+
+    <!-- Report -->
+    <string name="report_title">דיאגנוז פרו – דוח קודי תקלה</string>
+    <string name="report_vehicle">רכב</string>
+    <string name="report_date">תאריך</string>
+    <string name="report_codes">קודים</string>
+    <string name="report_generated">הופק באמצעות דיאגנוז פרו (OBD2 גנרי). הקודים מתארים את מה שמחשב הרכב זיהה; כדאי לאמת את הסיבה לפני החלפת חלקים.</string>
+
+    <string name="notif_channel">חיבור למתאם</string>
+    <string name="notif_connected">מחובר אל %1$s</string>
+</resources>
