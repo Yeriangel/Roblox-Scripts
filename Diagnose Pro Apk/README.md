@@ -12,7 +12,14 @@ can clear codes to turn off the Check Engine light. Full Hebrew and English supp
 
 ## Install the APK on your phone
 
-1. Copy `release/DiagnosePro-debug.apk` to the phone, or download it on the phone itself.
+Two APKs are in `release/`:
+- `DiagnosePro-release.apk` (recommended): signed release build, shrunk with R8 (~2.5 MB).
+- `DiagnosePro-debug.apk`: debug build (~19 MB).
+
+They are signed with different keys, so **uninstall one before installing the other** (Android refuses to
+install over an app signed with a different key).
+
+1. Copy the APK to the phone, or download it on the phone itself.
 2. Open it. Android asks you to allow **Install unknown apps** for the app you opened it with
    (Files, Chrome, etc.). Allow it, go back and tap **Install**.
 3. Play Protect may warn about an unknown developer: tap **More details → Install anyway**.
@@ -65,7 +72,23 @@ gradlew.bat testDebugUnitTest
 echo "sdk.dir=$ANDROID_HOME" > local.properties
 ./gradlew assembleDebug testDebugUnitTest
 ```
-Output: `app/build/outputs/apk/debug/app-debug.apk`. Install with `adb install -r app/build/outputs/apk/debug/app-debug.apk`.
+Output: `app/build/outputs/apk/debug/app-debug.apk`.
+
+### Release build
+
+```sh
+./gradlew assembleRelease   # -> app/build/outputs/apk/release/app-release.apk
+```
+Signing is read from `keystore.properties` in the project root (git-ignored):
+```properties
+storeFile=keystore/diagnosepro-release.jks
+storePassword=...
+keyAlias=diagnosepro
+keyPassword=...
+```
+or from the environment variables `DP_STORE_FILE`, `DP_STORE_PASSWORD`, `DP_KEY_ALIAS`, `DP_KEY_PASSWORD`.
+Without them the release APK is built unsigned. **Back up the keystore and its passwords**: every future update
+must be signed with the same key, or it will not install over the existing app. Install with `adb install -r app/build/outputs/apk/debug/app-debug.apk`.
 
 ## Project layout
 

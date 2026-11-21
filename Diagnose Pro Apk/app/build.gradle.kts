@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -20,10 +22,32 @@ android {
         vectorDrawables { useSupportLibrary = true }
     }
 
+    // Release signing: read from keystore.properties (git-ignored) or environment variables.
+    // If neither is present, assembleRelease produces an unsigned APK.
+    val keystoreProps = Properties().apply {
+        val f = rootProject.file("keystore.properties")
+        if (f.exists()) f.inputStream().use { load(it) }
+    }
+    fun secret(key: String, env: String): String? = keystoreProps.getProperty(key) ?: System.getenv(env)
+    val releaseStore = secret("storeFile", "DP_STORE_FILE")?.let { rootProject.file(it) }?.takeIf { it.exists() }
+
+    signingConfigs {
+        if (releaseStore != null) {
+            create("release") {
+                storeFile = releaseStore
+                storePassword = secret("storePassword", "DP_STORE_PASSWORD")
+                keyAlias = secret("keyAlias", "DP_KEY_ALIAS")
+                keyPassword = secret("keyPassword", "DP_KEY_PASSWORD")
+            }
+        }
+    }
+
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            signingConfigs.findByName("release")?.let { signingConfig = it }
         }
     }
     compileOptions {
